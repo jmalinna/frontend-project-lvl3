@@ -1,0 +1,24 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "RSS-aggregator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/julimalinna/frontend-project-lvl3.git"
+  },
+  "author": "Julia Malinina",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/julimalinna/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/julimalinna/frontend-project-lvl3#readme",
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
