@@ -4,3 +4,4 @@ coverage
 *.log
 dist
 assets
+.DS-Store
