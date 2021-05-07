@@ -1,4 +1,6 @@
 import onChange from 'on-change';
+import i18n from 'i18next';
+import ru from './locales/ru.js';
 
 const form = document.querySelector('form');
 const input = document.querySelector('input');
@@ -7,13 +9,9 @@ const div = document.querySelector('.feedback');
 const state = {
   form: {
     state: 'inactive',
-    fiedsURLs: [],
     valid: true,
     error: '',
   },
-  documents: [],
-  posts: [],
-  fieds: [],
   actualId: '',
 };
 
@@ -21,7 +19,7 @@ const createLiFiedElement = (innerState) => {
   const li = document.createElement('li');
   li.classList.add('list-group-item');
   const h3 = document.createElement('h3');
-  const fiedArray = innerState.fieds.filter((fied) => fied.id === innerState.actualId);
+  const fiedArray = ru.translation.fieds.filter((fied) => fied.id === innerState.actualId);
   const [fied] = fiedArray;
 
   h3.textContent = fied.title;
@@ -60,7 +58,7 @@ export default onChange(state, (path, value) => {
 
   if (path === 'form.state' && value === 'initialization') {
     const h2 = document.createElement('h2');
-    h2.textContent = 'Фиды';
+    h2.textContent = i18n.t('fiedsHeader');
     const ul = document.createElement('ul');
     ul.classList.add('list-group', 'mb-5');
     const li = createLiFiedElement(state);
@@ -69,11 +67,11 @@ export default onChange(state, (path, value) => {
     feeds.prepend(h2, ul);
 
     const h2Element = document.createElement('h2');
-    h2Element.textContent = 'Посты';
+    h2Element.textContent = i18n.t('postsHeader');
     const ulElement = document.createElement('ul');
     ulElement.classList.add('list-group');
 
-    const actualPosts = state.posts.filter((post) => post.id === state.actualId);
+    const actualPosts = ru.translation.posts.filter((post) => post.id === state.actualId);
     createLiPostElements(actualPosts, ulElement, state.actualId);
 
     posts.prepend(h2Element, ulElement);
@@ -85,13 +83,13 @@ export default onChange(state, (path, value) => {
     ulEl.prepend(liEl);
 
     const ulElPosts = posts.querySelector('ul');
-    const actualPosts2 = state.posts.filter((post) => post.id === state.actualId);
+    const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.actualId);
     createLiPostElements(actualPosts2, ulElPosts);
   }
 
   if (path === 'form.state' && value === 'finished') {
     form.reset();
     div.classList.add('text-success');
-    div.textContent = 'RSS успешно загружен';
+    div.textContent = i18n.t('form.notifications.rssSuccess');
   }
 });

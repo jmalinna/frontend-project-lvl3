@@ -1,7 +1,9 @@
 import 'bootstrap';
 import './style.scss';
 import * as yup from 'yup';
+import i18n from 'i18next';
 import watchedState from './view.js';
+import ru from './locales/ru.js';
 // import css from './style.css';
 
 const parseRSS = (xmlString) => {
@@ -10,6 +12,14 @@ const parseRSS = (xmlString) => {
 };
 
 export default () => {
+  i18n.init({
+    lng: 'ru',
+    debug: true,
+    resources: {
+      ru,
+    },
+  });
+
   const schema = yup.object().shape({
     url: yup.string().required().url(),
   });
@@ -22,8 +32,8 @@ export default () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     schema.isValid({ url: input.value }).then((validURL) => {
-      if (!validURL || watchedState.form.fiedsURLs.includes(input.value)) {
-        watchedState.form.error = !validURL ? 'Ссылка должна быть валидным URL' : 'RSS уже существует';
+      if (!validURL || ru.translation.fiedsURLs.includes(input.value)) {
+        watchedState.form.error = !validURL ? i18n.t('form.errors.invalidURL') : i18n.t('form.errors.existingURL');
         watchedState.form.valid = false;
       } else {
         watchedState.form.error = '';
@@ -33,19 +43,19 @@ export default () => {
             if (response.ok) return response.json();
             throw new Error('Network response was not ok.');
           })
-          .then((data) => {
-            const parsedRSS = parseRSS(data.contents);
+          .then((data) => parseRSS(data.contents))
+          .then((parsedRSS) => {
             const id = i;
             watchedState.actualId = i;
 
-            watchedState.documents.push({ id, document: parsedRSS });
-            watchedState.form.fiedsURLs.push(input.value);
+            ru.translation.documents.push({ id, document: parsedRSS });
+            ru.translation.fiedsURLs.push(input.value);
 
             const items = parsedRSS.querySelectorAll('item');
             const fiedDescription = parsedRSS.querySelector('description').textContent;
             const fiedTitle = parsedRSS.querySelector('title').textContent;
 
-            watchedState.fieds.push({
+            ru.translation.fieds.push({
               id, title: fiedTitle, description: fiedDescription, link: input.value,
             });
 
@@ -53,20 +63,24 @@ export default () => {
               const title = item.querySelector('title').textContent;
               const description = item.querySelector('description').textContent;
               const link = item.querySelector('link').textContent;
-              watchedState.posts.push({
+              ru.translation.posts.push({
                 id, title, description, link,
               });
             });
             i += 1;
-            if (watchedState.form.fiedsURLs.length === 1) {
+            if (ru.translation.fiedsURLs.length === 1) {
               watchedState.form.state = 'initialization';
             } else {
               watchedState.form.state = 'adding';
             }
             watchedState.form.state = 'finished';
+          })
+          .catch(() => {
+            watchedState.form.error = i18n.t('form.errors.invalidRSS');
+            watchedState.form.valid = false;
+            throw new Error(i18n.t('form.errors.invalidRSS'));
           });
       }
     });
   });
 };
-// последовательность выведения постов на страницу
