@@ -4,9 +4,9 @@ import * as yup from 'yup';
 import watchedState from './view.js';
 // import css from './style.css';
 
-const parseRSS = (htmlString) => {
+const parseRSS = (xmlString) => {
   const parser = new DOMParser();
-  return parser.parseFromString(htmlString, 'text/html');
+  return parser.parseFromString(xmlString, 'application/xml');
 };
 
 export default () => {
@@ -35,33 +35,38 @@ export default () => {
           })
           .then((data) => {
             const parsedRSS = parseRSS(data.contents);
-            watchedState.documents = parsedRSS;
+            const id = i;
+            watchedState.actualId = i;
+
+            watchedState.documents.push({ id, document: parsedRSS });
             watchedState.form.fiedsURLs.push(input.value);
 
             const items = parsedRSS.querySelectorAll('item');
             const fiedDescription = parsedRSS.querySelector('description').textContent;
             const fiedTitle = parsedRSS.querySelector('title').textContent;
-            const id = i;
 
             watchedState.fieds.push({
               id, title: fiedTitle, description: fiedDescription, link: input.value,
             });
 
-            watchedState.activeId = i;
-
             items.forEach((item) => {
               const title = item.querySelector('title').textContent;
               const description = item.querySelector('description').textContent;
-              const link = item.querySelector('link').nextSibling.data;
+              const link = item.querySelector('link').textContent;
               watchedState.posts.push({
                 id, title, description, link,
               });
             });
             i += 1;
-            watchedState.form.state = 'initialization';
+            if (watchedState.form.fiedsURLs.length === 1) {
+              watchedState.form.state = 'initialization';
+            } else {
+              watchedState.form.state = 'adding';
+            }
             watchedState.form.state = 'finished';
           });
       }
     });
   });
 };
+// последовательность выведения постов на страницу
