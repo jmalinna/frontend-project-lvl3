@@ -1,14 +1,34 @@
+/* eslint-disable consistent-return */
 import 'bootstrap';
 import './style.scss';
 import * as yup from 'yup';
 import i18n from 'i18next';
 import watchedState from './view.js';
 import ru from './locales/ru.js';
-// import css from './style.css';
 
 const parseRSS = (xmlString) => {
   const parser = new DOMParser();
   return parser.parseFromString(xmlString, 'application/xml');
+};
+
+const addFeed = (id, parsedRSS, url) => {
+  ru.translation.fiedsURLs.push({ id, url });
+  const fiedDescription = parsedRSS.querySelector('description').textContent;
+  const fiedTitle = parsedRSS.querySelector('title').textContent;
+  ru.translation.fieds.push({
+    id, title: fiedTitle, description: fiedDescription, link: url,
+  });
+};
+
+const addPosts = (id, items, postsName) => {
+  items.forEach((item) => {
+    const title = item.querySelector('title').textContent;
+    const description = item.querySelector('description').textContent;
+    const link = item.querySelector('link').textContent;
+    ru.translation[postsName].push({
+      id, title, description, link,
+    });
+  });
 };
 
 export default () => {
@@ -17,6 +37,12 @@ export default () => {
     debug: true,
     resources: {
       ru,
+    },
+  });
+
+  yup.setLocale({
+    string: {
+      url: () => ('form.errors.invalidURL'),
     },
   });
 
@@ -29,58 +55,86 @@ export default () => {
   const form = document.querySelector('form');
   const input = document.querySelector('input');
 
+  const addNewRssPosts = () => {
+    ru.translation.fiedsURLs.forEach((url) => {
+      watchedState.newPostsId = url.id;
+      fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`)
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw new Error('Network response was not ok.');
+        })
+        .then((data) => parseRSS(data.contents))
+        .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
+        .then((items) => {
+        // eslint-disable-next-line array-callback-return
+          Array.from(items).filter((item) => {
+            const samePost = ru.translation.posts.filter((post) => post.link === item.querySelector('link').textContent);
+            if (samePost.length === 0) return item;
+          });
+        })
+        .then((newItems) => {
+          if (newItems) {
+            const id = watchedState.newPostsId;
+            addPosts(id, newItems, 'updatedPosts');
+            watchedState.form.state = 'updating';
+          }
+        });
+    });
+    setTimeout(addNewRssPosts, 5000);
+  };
+
+  setTimeout(addNewRssPosts, 5000);
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    schema.isValid({ url: input.value }).then((validURL) => {
-      if (!validURL || ru.translation.fiedsURLs.includes(input.value)) {
-        watchedState.form.error = !validURL ? i18n.t('form.errors.invalidURL') : i18n.t('form.errors.existingURL');
+    schema.validate({ url: input.value })
+      .catch((error) => {
+        watchedState.form.error = i18n.t(error.errors.join(''));
         watchedState.form.valid = false;
-      } else {
-        watchedState.form.error = '';
-        watchedState.form.valid = true;
-        fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(input.value)}`)
-          .then((response) => {
-            if (response.ok) return response.json();
-            throw new Error('Network response was not ok.');
-          })
-          .then((data) => parseRSS(data.contents))
-          .then((parsedRSS) => {
-            const id = i;
-            watchedState.actualId = i;
+        throw new Error('invalidURL');
+      })
+      .then(() => ru.translation.fiedsURLs.filter((item) => item.url === input.value))
+      .then((existingURLs) => {
+        if (existingURLs.length === 0) {
+          watchedState.form.error = '';
+          watchedState.form.valid = true;
+        } else {
+          watchedState.form.error = i18n.t('form.errors.existingURL');
+          watchedState.form.valid = false;
+          throw new Error('URL already exists');
+        }
+      })
+      .then(() => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(input.value)}`))
+      .then((response) => {
+        if (response.ok) return response.json();
+        watchedState.form.error = i18n.t('form.errors.networkProblem');
+        watchedState.form.valid = false;
+        throw new Error('Network response was not ok.');
+      })
+      .then((data) => parseRSS(data.contents))
+      .then((parsedRSS) => {
+        if (parsedRSS.querySelectorAll('item').length === 0) {
+          throw new Error('Invalid RSS');
+        }
+        const id = i;
+        watchedState.actualId = i;
 
-            ru.translation.documents.push({ id, document: parsedRSS });
-            ru.translation.fiedsURLs.push(input.value);
+        addFeed(id, parsedRSS, input.value);
+        const items = parsedRSS.querySelectorAll('item');
+        addPosts(id, items, 'posts');
+        i += 1;
 
-            const items = parsedRSS.querySelectorAll('item');
-            const fiedDescription = parsedRSS.querySelector('description').textContent;
-            const fiedTitle = parsedRSS.querySelector('title').textContent;
-
-            ru.translation.fieds.push({
-              id, title: fiedTitle, description: fiedDescription, link: input.value,
-            });
-
-            items.forEach((item) => {
-              const title = item.querySelector('title').textContent;
-              const description = item.querySelector('description').textContent;
-              const link = item.querySelector('link').textContent;
-              ru.translation.posts.push({
-                id, title, description, link,
-              });
-            });
-            i += 1;
-            if (ru.translation.fiedsURLs.length === 1) {
-              watchedState.form.state = 'initialization';
-            } else {
-              watchedState.form.state = 'adding';
-            }
-            watchedState.form.state = 'finished';
-          })
-          .catch(() => {
-            watchedState.form.error = i18n.t('form.errors.invalidRSS');
-            watchedState.form.valid = false;
-            throw new Error(i18n.t('form.errors.invalidRSS'));
-          });
-      }
-    });
+        if (ru.translation.fiedsURLs.length === 1) {
+          watchedState.form.state = 'initialization';
+        } else {
+          watchedState.form.state = 'adding';
+        }
+        watchedState.form.state = 'finished';
+      })
+      .catch(() => {
+        watchedState.form.error = i18n.t('form.errors.invalidRSS');
+        watchedState.form.valid = false;
+        throw new Error('Invalid RSS');
+      });
   });
 };

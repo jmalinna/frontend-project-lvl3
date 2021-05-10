@@ -13,6 +13,7 @@ const state = {
     error: '',
   },
   actualId: '',
+  newPostsId: '',
 };
 
 const createLiFiedElement = (innerState) => {
@@ -85,6 +86,11 @@ export default onChange(state, (path, value) => {
     const ulElPosts = posts.querySelector('ul');
     const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.actualId);
     createLiPostElements(actualPosts2, ulElPosts);
+  }
+  if (path === 'form.state' && value === 'updating') {
+    const ulElPosts2 = posts.querySelector('ul');
+    const actualPosts3 = ru.translation.updatedPosts.filter((post) => post.id === state.newPostsId);
+    createLiPostElements(actualPosts3, ulElPosts2);
   }
 
   if (path === 'form.state' && value === 'finished') {
