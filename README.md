@@ -5,4 +5,4 @@
 <a href="https://codeclimate.com/github/julimalinna/frontend-project-lvl3/maintainability"><img src="https://api.codeclimate.com/v1/badges/3d2f76cff348fb38e787/maintainability" /></a>
 
 ### Link to the project:
-[RSS-aggregator](https://frontend-project-lvl3-1lo8rempz-julimalinna.vercel.app)
+[RSS-aggregator](https://frontend-project-lvl3-julimalinna.vercel.app)
