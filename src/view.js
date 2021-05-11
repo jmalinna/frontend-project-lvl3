@@ -39,6 +39,7 @@ const createLiPostElements = (actualPosts, ulElement) => {
     aElement.textContent = post.title;
     ulElement.prepend(liElement);
   });
+
   return ulElement;
 };
 
