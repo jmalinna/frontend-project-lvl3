@@ -30,11 +30,11 @@ const createLiFiedElement = (innerState) => {
   return li;
 };
 
-const createLiPostElements = (actualPosts, ulElement, id) => {
+const createLiPostElements = (actualPosts, ulElement) => {
   actualPosts.reverse().forEach((post) => {
     const liElement = document.createElement('li');
     liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
-    liElement.innerHTML = `<a href="${post.link}" class="font-weight-bold" data-id="${id}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${id}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
+    liElement.innerHTML = `<a href="${post.link}" class="font-weight-bold" data-id="${post.postId}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${post.postId}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
     const aElement = liElement.querySelector('a');
     aElement.textContent = post.title;
     ulElement.prepend(liElement);
@@ -73,7 +73,7 @@ export default onChange(state, (path, value) => {
     ulElement.classList.add('list-group');
 
     const actualPosts = ru.translation.posts.filter((post) => post.id === state.actualId);
-    createLiPostElements(actualPosts, ulElement, state.actualId);
+    createLiPostElements(actualPosts, ulElement);
 
     posts.prepend(h2Element, ulElement);
   }
@@ -89,8 +89,11 @@ export default onChange(state, (path, value) => {
   }
   if (path === 'form.state' && value === 'updating') {
     const ulElPosts2 = posts.querySelector('ul');
-    const actualPosts3 = ru.translation.updatedPosts.filter((post) => post.id === state.newPostsId);
-    createLiPostElements(actualPosts3, ulElPosts2);
+    createLiPostElements(ru.translation.updatedPosts, ulElPosts2);
+    ru.translation.updatedPosts.forEach((post) => {
+      ru.translation.posts.push(post);
+    });
+    ru.translation.updatedPosts = [];
   }
 
   if (path === 'form.state' && value === 'finished') {

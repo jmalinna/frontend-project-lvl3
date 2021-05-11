@@ -20,15 +20,40 @@ const addFeed = (id, parsedRSS, url) => {
   });
 };
 
+let postId = 1;
+
 const addPosts = (id, items, postsName) => {
   items.forEach((item) => {
     const title = item.querySelector('title').textContent;
     const description = item.querySelector('description').textContent;
     const link = item.querySelector('link').textContent;
     ru.translation[postsName].push({
-      id, title, description, link,
+      id, postId, title, description, link,
     });
+    postId += 1;
   });
+};
+
+const render = (target) => {
+  const { id } = target.dataset;
+  const activePost = ru.translation.posts.filter((post) => post.postId === Number(id));
+  const [post] = activePost;
+
+  const h5 = document.querySelector('.modal-title');
+  h5.textContent = post.title;
+  const modalBody = document.querySelector('.modal-body');
+  modalBody.textContent = post.description;
+  const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
+  aFooterElement.setAttribute('href', post.link);
+
+  const container = document.querySelector('.fade');
+  container.classList.add('show');
+  container.setAttribute('aria-modal', 'true');
+  container.setAttribute('style', 'display: block; padding-right: 15px;');
+  container.removeAttribute('aria-hidden');
+
+  const aPostElement = target.previousElementSibling;
+  aPostElement.classList.replace('font-weight-bold', 'font-weight-normal');
 };
 
 export default () => {
@@ -54,6 +79,7 @@ export default () => {
 
   const form = document.querySelector('form');
   const input = document.querySelector('input');
+  const posts = document.querySelector('.posts');
 
   const addNewRssPosts = () => {
     ru.translation.fiedsURLs.forEach((url) => {
@@ -135,6 +161,16 @@ export default () => {
         watchedState.form.error = i18n.t('form.errors.invalidRSS');
         watchedState.form.valid = false;
         throw new Error('Invalid RSS');
+      })
+      .then(() => {
+        const buttons = document.querySelectorAll('button[type="button"]');
+        buttons.forEach((button) => {
+          button.addEventListener('click', (event) => {
+            render(event.target);
+          });
+        });
       });
   });
+
+  posts.addEventListener('click', (e) => render(e.target));
 };
