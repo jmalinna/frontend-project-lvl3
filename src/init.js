@@ -161,14 +161,6 @@ export default () => {
         watchedState.form.error = i18n.t('form.errors.invalidRSS');
         watchedState.form.valid = false;
         throw new Error('Invalid RSS');
-      })
-      .then(() => {
-        const buttons = document.querySelectorAll('button[type="button"]');
-        buttons.forEach((button) => {
-          button.addEventListener('click', (event) => {
-            render(event.target);
-          });
-        });
       });
   });
 
