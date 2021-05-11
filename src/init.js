@@ -56,6 +56,10 @@ const render = (target) => {
   aPostElement.classList.replace('font-weight-bold', 'font-weight-normal');
 };
 
+const changeClass = (target) => {
+  target.classList.replace('font-weight-bold', 'font-weight-normal');
+};
+
 export default () => {
   i18n.init({
     lng: 'ru',
@@ -164,5 +168,12 @@ export default () => {
       });
   });
 
-  posts.addEventListener('click', (e) => render(e.target));
+  posts.addEventListener('click', (e) => {
+    const type = e.target.getAttribute('type');
+    if (type === 'button') {
+      render(e.target);
+    } else {
+      changeClass(e.target);
+    }
+  });
 };
