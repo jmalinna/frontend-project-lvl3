@@ -8,19 +8,22 @@ const div = document.querySelector('.feedback');
 
 const state = {
   form: {
-    state: 'inactive',
-    valid: true,
     error: '',
   },
-  actualId: '',
-  newPostsId: '',
+  posts: {
+    actualId: '',
+    newPostsId: '',
+    target: '',
+    viewedPostsIds: [],
+  },
+  state: 'inactive',
 };
 
 const createLiFiedElement = (innerState) => {
   const li = document.createElement('li');
   li.classList.add('list-group-item');
   const h3 = document.createElement('h3');
-  const fiedArray = ru.translation.fieds.filter((fied) => fied.id === innerState.actualId);
+  const fiedArray = ru.translation.fieds.filter((fied) => fied.id === innerState.posts.actualId);
   const [fied] = fiedArray;
 
   h3.textContent = fied.title;
@@ -43,9 +46,40 @@ const createLiPostElements = (actualPosts, ulElement) => {
   return ulElement;
 };
 
+const render = (eventTarget) => {
+  const type = eventTarget.getAttribute('type');
+
+  const markLinkAsViewed = (target) => {
+    target.classList.replace('font-weight-bold', 'font-weight-normal');
+  };
+
+  const showModalWindow = (target) => {
+    const { id } = target.dataset;
+    const activePost = ru.translation.posts.filter((post) => post.postId === Number(id));
+    const [post] = activePost;
+
+    const h5 = document.querySelector('.modal-title');
+    h5.textContent = post.title;
+    const modalBody = document.querySelector('.modal-body');
+    modalBody.textContent = post.description;
+    const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
+    aFooterElement.setAttribute('href', post.link);
+
+    const container = document.querySelector('.fade');
+    container.classList.add('show');
+    container.setAttribute('aria-modal', 'true');
+    container.setAttribute('style', 'display: block; padding-right: 15px;');
+    container.removeAttribute('aria-hidden');
+
+    const aPostElement = target.previousElementSibling;
+    markLinkAsViewed(aPostElement);
+  };
+  return type === 'button' ? showModalWindow(eventTarget) : markLinkAsViewed(eventTarget);
+};
+
 export default onChange(state, (path, value) => {
-  if (path === 'form.valid') {
-    if (value) {
+  if (path === 'form.error') {
+    if (value === '') {
       input.classList.remove('is-invalid');
       div.classList.remove('text-danger');
     } else {
@@ -58,7 +92,7 @@ export default onChange(state, (path, value) => {
   const feeds = document.querySelector('.feeds');
   const posts = document.querySelector('.posts');
 
-  if (path === 'form.state' && value === 'initialization') {
+  if (path === 'state' && value === 'initialization') {
     const h2 = document.createElement('h2');
     h2.textContent = i18n.t('fiedsHeader');
     const ul = document.createElement('ul');
@@ -73,22 +107,22 @@ export default onChange(state, (path, value) => {
     const ulElement = document.createElement('ul');
     ulElement.classList.add('list-group');
 
-    const actualPosts = ru.translation.posts.filter((post) => post.id === state.actualId);
+    const actualPosts = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
     createLiPostElements(actualPosts, ulElement);
 
     posts.prepend(h2Element, ulElement);
   }
 
-  if (path === 'form.state' && value === 'adding') {
+  if (path === 'state' && value === 'adding') {
     const ulEl = feeds.querySelector('ul');
     const liEl = createLiFiedElement(state);
     ulEl.prepend(liEl);
 
     const ulElPosts = posts.querySelector('ul');
-    const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.actualId);
+    const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
     createLiPostElements(actualPosts2, ulElPosts);
   }
-  if (path === 'form.state' && value === 'updating') {
+  if (path === 'state' && value === 'updating') {
     const ulElPosts2 = posts.querySelector('ul');
     createLiPostElements(ru.translation.updatedPosts, ulElPosts2);
     ru.translation.updatedPosts.forEach((post) => {
@@ -97,9 +131,13 @@ export default onChange(state, (path, value) => {
     ru.translation.updatedPosts = [];
   }
 
-  if (path === 'form.state' && value === 'finished') {
+  if (path === 'state' && value === 'finished') {
     form.reset();
     div.classList.add('text-success');
     div.textContent = i18n.t('form.notifications.rssSuccess');
+  }
+
+  if (path === 'posts.target') {
+    render(state.posts.target);
   }
 });
