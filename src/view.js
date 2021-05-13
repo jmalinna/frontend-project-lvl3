@@ -9,6 +9,7 @@ const div = document.querySelector('.feedback');
 const state = {
   form: {
     error: '',
+    disabledButton: false,
   },
   posts: {
     actualId: '',
@@ -78,6 +79,15 @@ const render = (eventTarget) => {
 };
 
 export default onChange(state, (path, value) => {
+  if (path === 'form.disabledButton') {
+    const button = document.querySelector('button[type="submit"]');
+    if (value === true) {
+      button.disabled = true;
+    } else {
+      button.disabled = false;
+    }
+  }
+
   if (path === 'form.error') {
     if (value === '') {
       input.classList.remove('is-invalid');

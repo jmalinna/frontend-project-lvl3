@@ -91,6 +91,7 @@ export default () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    watchedState.form.disabledButton = true;
     const inputURL = input.value.trim();
     schema.validate({ url: inputURL })
       .catch((error) => {
@@ -132,6 +133,7 @@ export default () => {
           watchedState.state = 'adding';
         }
         watchedState.state = 'finished';
+        watchedState.form.disabledButton = false;
       });
   });
 
