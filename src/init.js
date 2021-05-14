@@ -3,9 +3,9 @@ import 'bootstrap';
 import './style.scss';
 import * as yup from 'yup';
 import i18n from 'i18next';
+import axios from 'axios';
 import watchedState from './view.js';
 import ru from './locales/ru.js';
-import 'whatwg-fetch';
 
 const parseRSS = (xmlString) => {
   const parser = new DOMParser();
@@ -63,7 +63,7 @@ export default () => {
   const addNewRssPosts = () => {
     ru.translation.fiedsURLs.forEach((url) => {
       watchedState.posts.newPostsId = url.id;
-      fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`)
+      axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`)
         .then((response) => {
           if (response.ok) return response.json();
           throw new Error('Network response was not ok.');
@@ -108,7 +108,7 @@ export default () => {
           throw new Error('URL already exists');
         }
       })
-      .then(() => fetch(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`))
+      .then(() => axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`))
       .then((response) => {
         if (response.ok) return response.json();
         watchedState.form.error = i18n.t('form.errors.networkProblem');
