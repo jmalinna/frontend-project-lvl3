@@ -68,11 +68,7 @@ export default () => {
         url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`,
         responseType: 'json',
       })
-        .then((response) => {
-          if (response.ok) return response;
-          throw new Error('Network response was not ok.');
-        })
-        .then((data) => parseRSS(data.contents))
+        .then((response) => parseRSS(response.data))
         .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
         .then((items) => {
         // eslint-disable-next-line array-callback-return
@@ -118,11 +114,14 @@ export default () => {
         responseType: 'json',
       }))
       .then((response) => {
-        if (response.ok) return response;
+        console.log('response = ', response);
+        console.log('response data = ', response.data);
+        return parseRSS(response.data);
+      })
+      .catch(() => {
         watchedState.form.error = i18n.t('form.errors.networkProblem');
         throw new Error('Network response was not ok.');
       })
-      .then((data) => parseRSS(data.contents))
       .then((parsedRSS) => {
         if (parsedRSS.querySelectorAll('item').length === 0) {
           watchedState.form.error = i18n.t('form.errors.invalidRSS');
