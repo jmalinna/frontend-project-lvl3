@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import i18n from 'i18next';
 import watchedState from './view.js';
 import ru from './locales/ru.js';
+import 'whatwg-fetch';
 
 const parseRSS = (xmlString) => {
   const parser = new DOMParser();
