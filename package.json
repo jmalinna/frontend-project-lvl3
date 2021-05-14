@@ -35,19 +35,20 @@
     "postcss-loader": "^5.2.0",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",
+    "source-map-loader": "^2.0.1",
     "style-loader": "^2.0.0",
     "webpack": "^5.33.2",
     "webpack-cli": "^4.6.0",
     "xml-loader": "^1.2.1"
   },
   "dependencies": {
+    "@popperjs/core": "^2.9.2",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "i18next": "^20.2.2",
     "jquery": "^3.6.0",
     "lodash": "^4.17.21",
     "on-change": "^2.2.3",
-    "popper.js": "^1.16.1",
     "yup": "^0.32.9"
   }
 }

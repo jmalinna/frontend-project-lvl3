@@ -93,7 +93,6 @@ export default onChange(state, (path, value) => {
       input.classList.remove('is-invalid');
       div.classList.remove('text-danger');
     } else {
-      console.log(document);
       input.classList.add('is-invalid');
       div.classList.add('text-danger');
     }
