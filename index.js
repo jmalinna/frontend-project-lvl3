@@ -1,3 +1,3 @@
 import runApp from './src/init.js';
 
-runApp();
+export default runApp;
