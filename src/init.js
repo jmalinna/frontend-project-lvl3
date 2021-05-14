@@ -113,11 +113,7 @@ export default () => {
         url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`,
         responseType: 'json',
       }))
-      .then((response) => {
-        console.log('response = ', response);
-        console.log('response data = ', response.data);
-        return parseRSS(response.data);
-      })
+      .then((response) => parseRSS(response.data.contents))
       .catch(() => {
         watchedState.form.error = i18n.t('form.errors.networkProblem');
         throw new Error('Network response was not ok.');
