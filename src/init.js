@@ -63,9 +63,13 @@ export default () => {
   const addNewRssPosts = () => {
     ru.translation.fiedsURLs.forEach((url) => {
       watchedState.posts.newPostsId = url.id;
-      axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`)
+      axios({
+        method: 'get',
+        url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`,
+        responseType: 'json',
+      })
         .then((response) => {
-          if (response.ok) return response.json();
+          if (response.ok) return response;
           throw new Error('Network response was not ok.');
         })
         .then((data) => parseRSS(data.contents))
@@ -108,9 +112,13 @@ export default () => {
           throw new Error('URL already exists');
         }
       })
-      .then(() => axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`))
+      .then(() => axios({
+        method: 'get',
+        url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`,
+        responseType: 'json',
+      }))
       .then((response) => {
-        if (response.ok) return response.json();
+        if (response.ok) return response;
         watchedState.form.error = i18n.t('form.errors.networkProblem');
         throw new Error('Network response was not ok.');
       })
