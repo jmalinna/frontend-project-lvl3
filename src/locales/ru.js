@@ -7,7 +7,8 @@ export default {
         invalidURL: 'Ссылка должна быть валидным URL',
         invalidRSS: 'Ресурс не содержит валидный RSS',
         existingURL: 'RSS уже существует',
-        networkProblem: 'Возникли проблемы с сетью. Пожалуйста, попробуйте еще раз.',
+        networkProblem: 'Ошибка сети',
+        emptyField: 'Не должно быть пустым',
       },
       notifications: {
         rssSuccess: 'RSS успешно загружен',

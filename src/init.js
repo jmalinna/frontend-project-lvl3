@@ -51,7 +51,7 @@ export default () => {
   });
 
   const schema = yup.object().shape({
-    url: yup.string().required().url(),
+    url: yup.string().url(),
   });
 
   let i = 1;
@@ -60,14 +60,20 @@ export default () => {
   const input = document.querySelector('input');
   const posts = document.querySelector('.posts');
 
+  const makeRequest = (url) => axios({
+    method: 'get',
+    url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`,
+    responseType: 'json',
+  })
+    .catch(() => {
+      watchedState.form.error = i18n.t('form.errors.networkProblem');
+      throw new Error('Network response was not ok.');
+    });
+
   const addNewRssPosts = () => {
     ru.translation.fiedsURLs.forEach((url) => {
       watchedState.posts.newPostsId = url.id;
-      axios({
-        method: 'get',
-        url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`,
-        responseType: 'json',
-      })
+      makeRequest(url.url)
         .then((response) => parseRSS(response.data))
         .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
         .then((items) => {
@@ -97,6 +103,7 @@ export default () => {
     schema.validate({ url: inputURL })
       .catch((error) => {
         watchedState.form.error = i18n.t(error.errors.join(''));
+        watchedState.form.disabledButton = false;
         throw new Error('invalidURL');
       })
       .then(() => ru.translation.fiedsURLs.filter((item) => item.url === inputURL))
@@ -105,22 +112,16 @@ export default () => {
           watchedState.form.error = '';
         } else {
           watchedState.form.error = i18n.t('form.errors.existingURL');
+          watchedState.form.disabledButton = false;
           throw new Error('URL already exists');
         }
       })
-      .then(() => axios({
-        method: 'get',
-        url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`,
-        responseType: 'json',
-      }))
+      .then(() => makeRequest(inputURL))
       .then((response) => parseRSS(response.data.contents))
-      .catch(() => {
-        watchedState.form.error = i18n.t('form.errors.networkProblem');
-        throw new Error('Network response was not ok.');
-      })
       .then((parsedRSS) => {
         if (parsedRSS.querySelectorAll('item').length === 0) {
           watchedState.form.error = i18n.t('form.errors.invalidRSS');
+          watchedState.form.disabledButton = false;
           throw new Error('Invalid RSS');
         }
         const id = i;
