@@ -81,7 +81,8 @@ export default () => {
   })
     .catch(() => {
       watchedState.form.error = i18n.t('form.errors.networkProblem');
-      throw new Error('Network response was not ok.');
+      watchedState.form.disabledButton = false;
+      // throw new Error(i18n.t('form.errors.networkProblem'));
     });
 
   const addNewRssPosts = () => {
@@ -118,7 +119,7 @@ export default () => {
       .catch((error) => {
         watchedState.form.error = i18n.t(error.errors.join(''));
         watchedState.form.disabledButton = false;
-        throw new Error('invalidURL');
+        throw new Error(i18n.t(error.errors.join('')));
       })
       .then(() => ru.translation.fiedsURLs.filter((item) => item.url === inputURL))
       .then((existingURLs) => {
@@ -127,7 +128,7 @@ export default () => {
         } else {
           watchedState.form.error = i18n.t('form.errors.existingURL');
           watchedState.form.disabledButton = false;
-          throw new Error('URL already exists');
+          throw new Error(i18n.t('form.errors.existingURL'));
         }
       })
       .then(() => makeRequest(inputURL))
@@ -136,7 +137,7 @@ export default () => {
         if (parsedRSS.querySelectorAll('item').length === 0) {
           watchedState.form.error = i18n.t('form.errors.invalidRSS');
           watchedState.form.disabledButton = false;
-          throw new Error('Invalid RSS');
+          throw new Error(i18n.t('form.errors.invalidRSS'));
         }
         const id = i;
         watchedState.posts.actualId = i;
