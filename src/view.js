@@ -2,83 +2,61 @@ import onChange from 'on-change';
 import i18n from 'i18next';
 import ru from './locales/ru.js';
 
-const form = document.querySelector('form');
-const input = document.querySelector('input');
-const div = document.querySelector('.feedback');
-
-const createLiFiedElement = (innerState) => {
-  const li = document.createElement('li');
-  li.classList.add('list-group-item');
-  const h3 = document.createElement('h3');
-  const fiedArray = ru.translation.fieds.filter((fied) => fied.id === innerState.posts.actualId);
-  const [fied] = fiedArray;
-
-  h3.textContent = fied.title;
-  const p = document.createElement('p');
-  p.textContent = fied.description;
-  li.prepend(h3, p);
-  return li;
-};
-
-const createLiPostElements = (actualPosts, ulElement) => {
-  actualPosts.reverse().forEach((post) => {
-    const liElement = document.createElement('li');
-    liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
-    liElement.innerHTML = `<a href="${post.link}" class="font-weight-bold" data-id="${post.postId}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${post.postId}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
-    const aElement = liElement.querySelector('a');
-    aElement.textContent = post.title;
-    ulElement.prepend(liElement);
-  });
-
-  return ulElement;
-};
-
-const render = (eventTarget) => {
-  const type = eventTarget.getAttribute('type');
-
-  const markLinkAsViewed = (target) => {
-    target.classList.replace('font-weight-bold', 'font-weight-normal');
+export default (state) => onChange(state, (path, value) => {
+  const form = document.querySelector('form');
+  const input = document.querySelector('input');
+  const div = document.querySelector('.feedback');
+  const createLiFiedElement = (innerState) => {
+    const li = document.createElement('li');
+    li.classList.add('list-group-item');
+    const h3 = document.createElement('h3');
+    const actualFied = ru.translation.fieds.filter(
+      (fied) => fied.id === innerState.posts.actualId,
+    );
+    const [fied] = actualFied;
+    h3.textContent = fied.title;
+    const p = document.createElement('p');
+    p.textContent = fied.description;
+    li.prepend(h3, p);
+    return li;
+  };
+  const createLiPostElements = (actualPosts, ulElement) => {
+    actualPosts.reverse().forEach((post) => {
+      const liElement = document.createElement('li');
+      liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+      liElement.innerHTML = `<a href="${post.link}" class="font-weight-bold" data-id="${post.postId}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${post.postId}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
+      const aElement = liElement.querySelector('a');
+      aElement.textContent = post.title;
+      ulElement.prepend(liElement);
+    });
+    return ulElement;
+  };
+  const render = (eventTarget) => {
+    const type = eventTarget.getAttribute('type');
+    const markLinkAsViewed = (target) => {
+      target.classList.replace('font-weight-bold', 'font-weight-normal');
+    };
+    const showModalWindow = (target) => {
+      const { id } = target.dataset;
+      const activePost = ru.translation.posts.filter((post) => post.postId === Number(id));
+      const [post] = activePost;
+      const h5 = document.querySelector('.modal-title');
+      h5.textContent = post.title;
+      const modalBody = document.querySelector('.modal-body');
+      modalBody.textContent = post.description;
+      const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
+      aFooterElement.setAttribute('href', post.link);
+      const container = document.querySelector('.fade');
+      container.classList.add('show');
+      container.setAttribute('aria-modal', 'true');
+      container.setAttribute('style', 'display: block; padding-right: 15px;');
+      container.removeAttribute('aria-hidden');
+      const aPostElement = target.previousElementSibling;
+      markLinkAsViewed(aPostElement);
+    };
+    return type === 'button' ? showModalWindow(eventTarget) : markLinkAsViewed(eventTarget);
   };
 
-  const showModalWindow = (target) => {
-    const { id } = target.dataset;
-    const activePost = ru.translation.posts.filter((post) => post.postId === Number(id));
-    const [post] = activePost;
-
-    const h5 = document.querySelector('.modal-title');
-    h5.textContent = post.title;
-    const modalBody = document.querySelector('.modal-body');
-    modalBody.textContent = post.description;
-    const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
-    aFooterElement.setAttribute('href', post.link);
-
-    const container = document.querySelector('.fade');
-    container.classList.add('show');
-    container.setAttribute('aria-modal', 'true');
-    container.setAttribute('style', 'display: block; padding-right: 15px;');
-    container.removeAttribute('aria-hidden');
-
-    const aPostElement = target.previousElementSibling;
-    markLinkAsViewed(aPostElement);
-  };
-  return type === 'button' ? showModalWindow(eventTarget) : markLinkAsViewed(eventTarget);
-};
-
-const state = {
-  form: {
-    error: '',
-    disabledButton: false,
-  },
-  posts: {
-    actualId: '',
-    newPostsId: '',
-    target: '',
-    viewedPostsIds: [],
-  },
-  state: 'inactive',
-};
-
-export default onChange(state, (path, value) => {
   if (path === 'form.disabledButton') {
     const button = document.querySelector('button[type="submit"]');
     if (value === true) {

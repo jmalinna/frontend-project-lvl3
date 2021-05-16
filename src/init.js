@@ -4,38 +4,24 @@ import './style.scss';
 import * as yup from 'yup';
 import i18n from 'i18next';
 import axios from 'axios';
-import watchedState from './view.js';
+import view from './view.js';
 import ru from './locales/ru.js';
 
-const parseRSS = (xmlString) => {
-  const parser = new DOMParser();
-  return parser.parseFromString(xmlString, 'application/xml');
-};
-
-const addFeed = (id, parsedRSS, url) => {
-  ru.translation.fiedsURLs.push({ id, url });
-  const fiedDescription = parsedRSS.querySelector('description').textContent;
-  const fiedTitle = parsedRSS.querySelector('title').textContent;
-  ru.translation.fieds.push({
-    id, title: fiedTitle, description: fiedDescription, link: url,
-  });
-};
-
-let postId = 1;
-
-const addPosts = (id, items, postsName) => {
-  items.forEach((item) => {
-    const title = item.querySelector('title').textContent;
-    const description = item.querySelector('description').textContent;
-    const link = item.querySelector('link').textContent;
-    ru.translation[postsName].push({
-      id, postId, title, description, link,
-    });
-    postId += 1;
-  });
-};
-
 export default () => {
+  const state = {
+    form: {
+      error: '',
+      disabledButton: false,
+    },
+    posts: {
+      actualId: '',
+      newPostsId: '',
+      target: '',
+      viewedPostsIds: [],
+    },
+    state: 'inactive',
+  };
+
   i18n.init({
     lng: 'ru',
     debug: true,
@@ -55,6 +41,34 @@ export default () => {
   });
 
   let i = 1;
+  let postId = 1;
+  const watchedState = view(state);
+
+  const parseRSS = (xmlString) => {
+    const parser = new DOMParser();
+    return parser.parseFromString(xmlString, 'application/xml');
+  };
+
+  const addFeed = (id, parsedRSS, url) => {
+    ru.translation.fiedsURLs.push({ id, url });
+    const fiedDescription = parsedRSS.querySelector('description').textContent;
+    const fiedTitle = parsedRSS.querySelector('title').textContent;
+    ru.translation.fieds.push({
+      id, title: fiedTitle, description: fiedDescription, link: url,
+    });
+  };
+
+  const addPosts = (id, items, postsName) => {
+    items.forEach((item) => {
+      const title = item.querySelector('title').textContent;
+      const description = item.querySelector('description').textContent;
+      const link = item.querySelector('link').textContent;
+      ru.translation[postsName].push({
+        id, postId, title, description, link,
+      });
+      postId += 1;
+    });
+  };
 
   const form = document.querySelector('form');
   const input = document.querySelector('input');
