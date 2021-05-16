@@ -1,11 +1,11 @@
-/* eslint-disable consistent-return */
 import 'bootstrap';
 import './style.scss';
 import * as yup from 'yup';
 import i18n from 'i18next';
-import axios from 'axios';
 import view from './view.js';
 import ru from './locales/ru.js';
+import render from './render.js';
+import addNewRssPosts from './updatePosts.js';
 
 export default () => {
   const state = {
@@ -18,6 +18,8 @@ export default () => {
       newPostsId: '',
       target: '',
       viewedPostsIds: [],
+      commonId: 1,
+      postId: 1,
     },
     state: 'inactive',
   };
@@ -40,121 +42,17 @@ export default () => {
     url: yup.string().url(),
   });
 
-  let i = 1;
-  let postId = 1;
   const watchedState = view(state);
-
-  const parseRSS = (xmlString) => {
-    const parser = new DOMParser();
-    return parser.parseFromString(xmlString, 'application/xml');
-  };
-
-  const addFeed = (id, parsedRSS, url) => {
-    ru.translation.fiedsURLs.push({ id, url });
-    const fiedDescription = parsedRSS.querySelector('description').textContent;
-    const fiedTitle = parsedRSS.querySelector('title').textContent;
-    ru.translation.fieds.push({
-      id, title: fiedTitle, description: fiedDescription, link: url,
-    });
-  };
-
-  const addPosts = (id, items, postsName) => {
-    items.forEach((item) => {
-      const title = item.querySelector('title').textContent;
-      const description = item.querySelector('description').textContent;
-      const link = item.querySelector('link').textContent;
-      ru.translation[postsName].push({
-        id, postId, title, description, link,
-      });
-      postId += 1;
-    });
-  };
 
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const posts = document.querySelector('.posts');
 
-  const makeRequest = (url) => axios({
-    method: 'get',
-    url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`,
-    responseType: 'json',
-  })
-    .catch(() => {
-      watchedState.form.error = i18n.t('form.errors.networkProblem');
-      watchedState.form.disabledButton = false;
-      // throw new Error(i18n.t('form.errors.networkProblem'));
-    });
-
-  const addNewRssPosts = () => {
-    ru.translation.fiedsURLs.forEach((url) => {
-      watchedState.posts.newPostsId = url.id;
-      makeRequest(url.url)
-        .then((response) => parseRSS(response.data))
-        .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
-        .then((items) => {
-        // eslint-disable-next-line array-callback-return
-          Array.from(items).filter((item) => {
-            const samePost = ru.translation.posts.filter((post) => post.link === item.querySelector('link').textContent);
-            if (samePost.length === 0) return item;
-          });
-        })
-        .then((newItems) => {
-          if (newItems) {
-            const id = watchedState.posts.newPostsId;
-            addPosts(id, newItems, 'updatedPosts');
-            watchedState.state = 'updating';
-          }
-        });
-    });
-    setTimeout(addNewRssPosts, 5000);
-  };
-
-  setTimeout(addNewRssPosts, 5000);
+  setTimeout(() => addNewRssPosts(state), 5000);
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    watchedState.form.disabledButton = true;
-    const inputURL = input.value.trim();
-    schema.validate({ url: inputURL })
-      .catch((error) => {
-        watchedState.form.error = i18n.t(error.errors.join(''));
-        watchedState.form.disabledButton = false;
-        throw new Error(i18n.t(error.errors.join('')));
-      })
-      .then(() => ru.translation.fiedsURLs.filter((item) => item.url === inputURL))
-      .then((existingURLs) => {
-        if (existingURLs.length === 0) {
-          watchedState.form.error = '';
-        } else {
-          watchedState.form.error = i18n.t('form.errors.existingURL');
-          watchedState.form.disabledButton = false;
-          throw new Error(i18n.t('form.errors.existingURL'));
-        }
-      })
-      .then(() => makeRequest(inputURL))
-      .then((response) => parseRSS(response.data.contents))
-      .then((parsedRSS) => {
-        if (parsedRSS.querySelectorAll('item').length === 0) {
-          watchedState.form.error = i18n.t('form.errors.invalidRSS');
-          watchedState.form.disabledButton = false;
-          throw new Error(i18n.t('form.errors.invalidRSS'));
-        }
-        const id = i;
-        watchedState.posts.actualId = i;
-
-        addFeed(id, parsedRSS, inputURL);
-        const items = parsedRSS.querySelectorAll('item');
-        addPosts(id, items, 'posts');
-        i += 1;
-
-        if (ru.translation.fiedsURLs.length === 1) {
-          watchedState.state = 'initialization';
-        } else {
-          watchedState.state = 'adding';
-        }
-        watchedState.state = 'finished';
-        watchedState.form.disabledButton = false;
-      });
+    render(state, input, schema);
   });
 
   posts.addEventListener('click', (e) => {

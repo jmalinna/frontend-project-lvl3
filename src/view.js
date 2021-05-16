@@ -6,6 +6,7 @@ export default (state) => onChange(state, (path, value) => {
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const div = document.querySelector('.feedback');
+
   const createLiFiedElement = (innerState) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
@@ -65,6 +66,7 @@ export default (state) => onChange(state, (path, value) => {
       button.disabled = false;
     }
   }
+
   if (path === 'form.error') {
     if (value === '') {
       input.classList.remove('is-invalid');
@@ -75,46 +77,54 @@ export default (state) => onChange(state, (path, value) => {
     }
     div.textContent = state.form.error;
   }
-  const feeds = document.querySelector('.feeds');
-  const posts = document.querySelector('.posts');
-  if (path === 'state' && value === 'initialization') {
-    const h2 = document.createElement('h2');
-    h2.textContent = i18n.t('fiedsHeader');
-    const ul = document.createElement('ul');
-    ul.classList.add('list-group', 'mb-5');
-    const li = createLiFiedElement(state);
-    ul.append(li);
-    feeds.prepend(h2, ul);
-    const h2Element = document.createElement('h2');
-    h2Element.textContent = i18n.t('postsHeader');
-    const ulElement = document.createElement('ul');
-    ulElement.classList.add('list-group');
-    const actualPosts = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
-    createLiPostElements(actualPosts, ulElement);
-    posts.prepend(h2Element, ulElement);
-  }
-  if (path === 'state' && value === 'adding') {
-    const ulEl = feeds.querySelector('ul');
-    const liEl = createLiFiedElement(state);
-    ulEl.prepend(liEl);
-    const ulElPosts = posts.querySelector('ul');
-    const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
-    createLiPostElements(actualPosts2, ulElPosts);
-  }
-  if (path === 'state' && value === 'updating') {
-    const ulElPosts2 = posts.querySelector('ul');
-    createLiPostElements(ru.translation.updatedPosts, ulElPosts2);
-    ru.translation.updatedPosts.forEach((post) => {
-      ru.translation.posts.push(post);
-    });
-    ru.translation.updatedPosts = [];
-  }
-  if (path === 'state' && value === 'finished') {
-    form.reset();
-    div.classList.add('text-success');
-    div.textContent = i18n.t('form.notifications.rssSuccess');
-  }
+
   if (path === 'posts.target') {
     render(state.posts.target);
+  }
+
+  if (path === 'state') {
+    const feeds = document.querySelector('.feeds');
+    const posts = document.querySelector('.posts');
+
+    if (value === 'initialization') {
+      const h2 = document.createElement('h2');
+      h2.textContent = i18n.t('fiedsHeader');
+      const ul = document.createElement('ul');
+      ul.classList.add('list-group', 'mb-5');
+      const li = createLiFiedElement(state);
+      ul.append(li);
+      feeds.prepend(h2, ul);
+      const h2Element = document.createElement('h2');
+      h2Element.textContent = i18n.t('postsHeader');
+      const ulElement = document.createElement('ul');
+      ulElement.classList.add('list-group');
+      const actualPosts = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
+      createLiPostElements(actualPosts, ulElement);
+      posts.prepend(h2Element, ulElement);
+    }
+
+    if (value === 'adding') {
+      const ulEl = feeds.querySelector('ul');
+      const liEl = createLiFiedElement(state);
+      ulEl.prepend(liEl);
+      const ulElPosts = posts.querySelector('ul');
+      const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
+      createLiPostElements(actualPosts2, ulElPosts);
+    }
+
+    if (value === 'updating') {
+      const ulElPosts2 = posts.querySelector('ul');
+      createLiPostElements(ru.translation.updatedPosts, ulElPosts2);
+      ru.translation.updatedPosts.forEach((post) => {
+        ru.translation.posts.push(post);
+      });
+      ru.translation.updatedPosts = [];
+    }
+
+    if (value === 'finished') {
+      form.reset();
+      div.classList.add('text-success');
+      div.textContent = i18n.t('form.notifications.rssSuccess');
+    }
   }
 });
