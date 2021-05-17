@@ -25,10 +25,12 @@ export default (state, input, schema) => {
     .catch(() => {
       watchedState.form.error = i18n.t('form.errors.networkProblem');
       watchedState.form.disabledButton = false;
+      throw new Error(i18n.t('form.errors.networkProblem'));
     });
 
   watchedState.form.disabledButton = true;
   const inputURL = input.value.trim();
+
   schema.validate({ url: inputURL })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
@@ -51,6 +53,7 @@ export default (state, input, schema) => {
       if (parsedRSS.querySelectorAll('item').length === 0) {
         watchedState.form.error = i18n.t('form.errors.invalidRSS');
         watchedState.form.disabledButton = false;
+        throw new Error(i18n.t('form.errors.invalidRSS'));
       }
       const id = watchedState.posts.commonId;
       watchedState.posts.actualId = id;
@@ -65,5 +68,6 @@ export default (state, input, schema) => {
       }
       watchedState.state = 'finished';
       watchedState.form.disabledButton = false;
-    });
+    })
+    .catch(() => console.log);
 };
