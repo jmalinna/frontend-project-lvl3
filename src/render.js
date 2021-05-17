@@ -7,7 +7,6 @@ import addPosts from './addPosts.js';
 
 export default (state, input, schema) => {
   const watchedState = view(state);
-  console.log('watched state = ', watchedState);
   const addFeed = (id, parsedRSS, url) => {
     ru.translation.fiedsURLs.push({ id, url });
     const fiedDescription = parsedRSS.querySelector('description').textContent;
