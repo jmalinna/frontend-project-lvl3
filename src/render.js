@@ -41,6 +41,7 @@ export default (state, input, schema) => {
       responseType: 'json',
     })
       .then((response) => {
+        console.log('response =', response);
         if (response.statusText === 'OK') return response;
         watchedState.form.error = i18n.t('form.errors.networkProblem');
         watchedState.form.disabledButton = false;
