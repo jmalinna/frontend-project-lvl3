@@ -14,6 +14,7 @@ export default (state, input, schema) => {
     ru.translation.fieds.push({
       id, title: fiedTitle, description: fiedDescription, link: url,
     });
+    console.log('ru.translation.fieds =', ru.translation.fieds);
   };
 
   watchedState.form.disabledButton = true;
@@ -56,10 +57,13 @@ export default (state, input, schema) => {
       }
       const id = watchedState.posts.commonId;
       watchedState.posts.actualId = id;
+      console.log('id = ', id);
       addFeed(id, parsedRSS, inputURL);
       const items = parsedRSS.querySelectorAll('item');
+      console.log('items = ', items);
       addPosts(id, items, 'posts', state);
       watchedState.posts.commonId += 1;
+
       if (ru.translation.fiedsURLs.length === 1) {
         watchedState.state = 'initialization';
       } else {
