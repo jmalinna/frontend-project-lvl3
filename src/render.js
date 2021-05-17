@@ -7,7 +7,7 @@ import addPosts from './addPosts.js';
 
 export default (state, input, schema) => {
   const watchedState = view(state);
-
+  console.log('watched state = ', watchedState);
   const addFeed = (id, parsedRSS, url) => {
     ru.translation.fiedsURLs.push({ id, url });
     const fiedDescription = parsedRSS.querySelector('description').textContent;
@@ -69,9 +69,5 @@ export default (state, input, schema) => {
       watchedState.state = 'finished';
       watchedState.form.disabledButton = false;
     })
-    .catch((error) => {
-      if (error.message === i18n.t('form.errors.networkProblem')) {
-        throw new Error(i18n.t('form.errors.networkProblem'));
-      }
-    });
+    .catch(() => console.log);
 };
