@@ -29,7 +29,7 @@ export default (state, input, schema) => {
 
   watchedState.form.disabledButton = true;
   const inputURL = input.value.trim();
-
+  console.log('inputURL = ', inputURL);
   schema.validate({ url: inputURL })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));

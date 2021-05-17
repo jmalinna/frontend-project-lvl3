@@ -125,7 +125,6 @@ export default (state) => onChange(state, (path, value) => {
       div.classList.add('text-success');
       div.textContent = i18n.t('form.notifications.rssSuccess');
       form.reset();
-      console.log('div.textContent', div.textContent);
     }
   }
 });
