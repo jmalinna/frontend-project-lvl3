@@ -72,5 +72,5 @@ export default (state, input, schema) => {
       watchedState.state = 'finished';
       watchedState.form.disabledButton = false;
     })
-    .catch(() => console.log);
+    // .catch(() => console.log);
 };
