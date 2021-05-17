@@ -69,5 +69,9 @@ export default (state, input, schema) => {
       watchedState.state = 'finished';
       watchedState.form.disabledButton = false;
     })
-    .catch(() => console.log);
+    .catch((error) => {
+      if (error.message === i18n.t('form.errors.networkProblem')) {
+        throw new Error(i18n.t('form.errors.networkProblem'));
+      }
+    });
 };
