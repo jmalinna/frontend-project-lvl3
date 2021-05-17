@@ -39,7 +39,7 @@ export default (state, input, schema) => {
     .then(() => axios({
       method: 'get',
       url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`,
-      responseType: 'json',
+      //responseType: 'json',
     })
       .then((response) => {
         console.log('response =', response);
@@ -72,5 +72,5 @@ export default (state, input, schema) => {
       watchedState.state = 'finished';
       watchedState.form.disabledButton = false;
     })
-    // .catch(() => console.log);
+    .catch((error) => console.log(error));
 };
