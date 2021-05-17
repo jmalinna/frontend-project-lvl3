@@ -16,20 +16,9 @@ export default (state, input, schema) => {
     });
   };
 
-  const makeRequest = (url) => axios({
-    method: 'get',
-    url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`,
-    responseType: 'json',
-  })
-    .catch(() => {
-      watchedState.form.error = i18n.t('form.errors.networkProblem');
-      watchedState.form.disabledButton = false;
-      throw new Error(i18n.t('form.errors.networkProblem'));
-    });
-
   watchedState.form.disabledButton = true;
   const inputURL = input.value.trim();
-  console.log('inputURL = ', inputURL);
+
   schema.validate({ url: inputURL })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
@@ -46,7 +35,17 @@ export default (state, input, schema) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => makeRequest(inputURL))
+    .then(() => axios({
+      method: 'get',
+      url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`,
+      responseType: 'json',
+    })
+      .then((response) => {
+        if (response.statusText === 'OK') return response;
+        watchedState.form.error = i18n.t('form.errors.networkProblem');
+        watchedState.form.disabledButton = false;
+        throw new Error(i18n.t('form.errors.networkProblem'));
+      }))
     .then((response) => parseRSS(response.data.contents))
     .then((parsedRSS) => {
       if (parsedRSS.querySelectorAll('item').length === 0) {

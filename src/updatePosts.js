@@ -1,6 +1,5 @@
 /* eslint-disable consistent-return */
 import axios from 'axios';
-import i18n from 'i18next';
 import ru from './locales/ru.js';
 import view from './view.js';
 import parseRSS from './parseRSS.js';
@@ -9,19 +8,13 @@ import addPosts from './addPosts.js';
 const addNewRssPosts = (state) => {
   const watchedState = view(state);
 
-  const makeRequest = (url) => axios({
-    method: 'get',
-    url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`,
-    responseType: 'json',
-  })
-    .catch(() => {
-      watchedState.form.error = i18n.t('form.errors.networkProblem');
-      watchedState.form.disabledButton = false;
-    });
-
   ru.translation.fiedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
-    makeRequest(url.url)
+    axios({
+      method: 'get',
+      url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`,
+      responseType: 'json',
+    })
       .then((response) => parseRSS(response.data))
       .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
       .then((items) => {
