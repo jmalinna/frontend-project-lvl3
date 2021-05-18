@@ -34,7 +34,6 @@ export default () => {
     url: yup.string().url(),
   });
 
-  const watchedState = view(state);
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const posts = document.querySelector('.posts');
@@ -47,6 +46,8 @@ export default () => {
     },
   })
     .then(() => {
+      const watchedState = view(state);
+
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         render(state, input, schema);
