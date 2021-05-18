@@ -10,11 +10,7 @@ const addNewRssPosts = (state) => {
 
   ru.translation.fiedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
-    axios({
-      method: 'get',
-      url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url)}`,
-      responseType: 'json',
-    })
+    axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(url.url)}`)
       .then((response) => parseRSS(response.data))
       .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
       .then((items) => {
