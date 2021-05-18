@@ -36,7 +36,11 @@ export default (state, input, schema) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`)
+    .then(() => axios({
+      method: 'get',
+      url: `https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`,
+      responseType: 'json',
+    })
       .then((response) => {
         console.log('response =', response);
         if (response.statusText === 'OK') return response;
