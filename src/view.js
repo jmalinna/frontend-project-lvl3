@@ -6,7 +6,7 @@ export default (state) => onChange(state, (path, value) => {
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const div = document.querySelector('.feedback');
-  const button = document.querySelector('button[type="submit"]');
+  const button = document.querySelector('[aria-label="add"]'); // 'button[type="submit"]'
 
   const createLiFiedElement = (innerState) => {
     const li = document.createElement('li');
@@ -106,12 +106,9 @@ export default (state) => onChange(state, (path, value) => {
 
     if (value === 'adding') {
       const ulEl = feeds.querySelector('ul');
-      console.log('ulEl = ', ulEl);
       const liEl = createLiFiedElement(state);
-      console.log('liEl = ', liEl);
       ulEl.prepend(liEl);
       const ulElPosts = posts.querySelector('ul');
-      console.log('ulElPosts = ', ulElPosts);
       const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
       createLiPostElements(actualPosts2, ulElPosts);
     }
