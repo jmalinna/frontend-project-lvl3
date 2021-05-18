@@ -6,7 +6,7 @@ export default (state) => onChange(state, (path, value) => {
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const div = document.querySelector('.feedback');
-  const button = document.querySelector('[aria-label="add"]'); // 'button[type="submit"]'
+  const button = document.querySelector('button[type="submit"]');
 
   const createLiFiedElement = (innerState) => {
     const li = document.createElement('li');

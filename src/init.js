@@ -24,14 +24,6 @@ export default () => {
     state: 'inactive',
   };
 
-  i18n.init({
-    lng: 'ru',
-    debug: true,
-    resources: {
-      ru,
-    },
-  });
-
   yup.setLocale({
     string: {
       url: () => ('form.errors.invalidURL'),
@@ -43,20 +35,28 @@ export default () => {
   });
 
   const watchedState = view(state);
-
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const posts = document.querySelector('.posts');
 
+  i18n.init({
+    lng: 'ru',
+    debug: true,
+    resources: {
+      ru,
+    },
+  })
+    .then(() => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        render(state, input, schema);
+      });
+
+      posts.addEventListener('click', (e) => {
+        watchedState.posts.target = e.target;
+        watchedState.posts.viewedPostsIds.push(e.target.id);
+      });
+    });
+
   setTimeout(() => addNewRssPosts(state), 5000);
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    render(state, input, schema);
-  });
-
-  posts.addEventListener('click', (e) => {
-    watchedState.posts.target = e.target;
-    watchedState.posts.viewedPostsIds.push(e.target.id);
-  });
 };
