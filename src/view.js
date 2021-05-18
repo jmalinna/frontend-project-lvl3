@@ -6,6 +6,7 @@ export default (state) => onChange(state, (path, value) => {
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const div = document.querySelector('.feedback');
+  const button = document.querySelector('button[type="submit"]');
 
   const createLiFiedElement = (innerState) => {
     const li = document.createElement('li');
@@ -59,12 +60,7 @@ export default (state) => onChange(state, (path, value) => {
   };
 
   if (path === 'form.disabledButton') {
-    const button = document.querySelector('button[type="submit"]');
-    if (value === true) {
-      button.disabled = true;
-    } else {
-      button.disabled = false;
-    }
+    button.disabled = true;
   }
 
   if (path === 'form.error') {
@@ -76,6 +72,7 @@ export default (state) => onChange(state, (path, value) => {
       div.classList.add('text-danger');
     }
     div.textContent = state.form.error;
+    button.disabled = false;
   }
 
   if (path === 'posts.target') {
@@ -127,6 +124,7 @@ export default (state) => onChange(state, (path, value) => {
     if (value === 'finished') {
       div.classList.add('text-success');
       div.textContent = i18n.t('form.notifications.rssSuccess');
+      button.disabled = false;
       form.reset();
     }
   }

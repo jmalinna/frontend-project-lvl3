@@ -14,7 +14,6 @@ const addPosts = (id, items, postsName, state) => {
       description,
       link,
     });
-    // postId += 1;
     watchedState.posts.postId += 1;
   });
 };

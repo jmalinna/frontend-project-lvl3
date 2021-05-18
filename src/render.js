@@ -23,7 +23,6 @@ export default (state, input, schema) => {
   schema.validate({ url: inputURL })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
-      watchedState.form.disabledButton = false;
       throw new Error(i18n.t(error.errors.join('')));
     })
     .then(() => ru.translation.fiedsURLs.filter((item) => item.url === inputURL))
@@ -32,7 +31,6 @@ export default (state, input, schema) => {
         watchedState.form.error = '';
       } else {
         watchedState.form.error = i18n.t('form.errors.existingURL');
-        watchedState.form.disabledButton = false;
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
@@ -41,14 +39,12 @@ export default (state, input, schema) => {
         console.log('response =', response);
         if (response.statusText === 'OK') return response;
         watchedState.form.error = i18n.t('form.errors.networkProblem');
-        watchedState.form.disabledButton = false;
         throw new Error(i18n.t('form.errors.networkProblem'));
       }))
     .then((response) => parseRSS(response.data.contents))
     .then((parsedRSS) => {
       if (parsedRSS.querySelectorAll('item').length === 0) {
         watchedState.form.error = i18n.t('form.errors.invalidRSS');
-        watchedState.form.disabledButton = false;
         throw new Error(i18n.t('form.errors.invalidRSS'));
       }
       const id = watchedState.posts.commonId;
@@ -66,7 +62,6 @@ export default (state, input, schema) => {
         watchedState.state = 'adding';
       }
       watchedState.state = 'finished';
-      watchedState.form.disabledButton = false;
     })
     .catch((error) => console.log(error));
 };
