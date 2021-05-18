@@ -5,7 +5,7 @@ import i18n from 'i18next';
 import view from './view.js';
 import ru from './locales/ru.js';
 import render from './render.js';
-import addNewRssPosts from './updatePosts.js';
+// import addNewRssPosts from './updatePosts.js';
 
 export default () => {
   const state = {
@@ -59,5 +59,5 @@ export default () => {
       });
     });
 
-  setTimeout(() => addNewRssPosts(state), 5000);
+  // setTimeout(() => addNewRssPosts(state), 5000);
 };

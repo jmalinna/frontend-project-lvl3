@@ -61,11 +61,9 @@ export default (state) => onChange(state, (path, value) => {
 
   if (path === 'form.disabledButton') {
     if (value === true) {
-      button.setAttribute('disabled', true);
-      // button.disabled = true;
+      button.disabled = true;
     } else {
-      // button.disabled = false;
-      button.removeAttribute('disabled');
+      button.disabled = false;
     }
   }
 
@@ -125,8 +123,7 @@ export default (state) => onChange(state, (path, value) => {
     }
 
     if (value === 'finished') {
-      // button.disabled = false;
-      button.removeAttribute('disabled');
+      button.disabled = false;
       div.classList.add('text-success');
       div.textContent = i18n.t('form.notifications.rssSuccess');
       form.reset();
