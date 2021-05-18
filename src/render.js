@@ -36,7 +36,7 @@ export default (state, input, schema) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => axios.get(`https://hexlet-allorigins.herokuapp.com/get?url=${encodeURIComponent(inputURL)}`)
+    .then(() => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(inputURL)}`)
       .then((response) => {
         console.log('response =', response);
         if (response.statusText === 'OK') return response;
