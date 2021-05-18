@@ -60,7 +60,11 @@ export default (state) => onChange(state, (path, value) => {
   };
 
   if (path === 'form.disabledButton') {
-    button.disabled = true;
+    if (value === true) {
+      button.disabled = true;
+    } else {
+      button.disabled = false;
+    }
   }
 
   if (path === 'form.error') {
@@ -71,8 +75,8 @@ export default (state) => onChange(state, (path, value) => {
       input.classList.add('is-invalid');
       div.classList.add('text-danger');
     }
-    div.textContent = state.form.error;
     button.disabled = false;
+    div.textContent = state.form.error;
   }
 
   if (path === 'posts.target') {
@@ -122,9 +126,9 @@ export default (state) => onChange(state, (path, value) => {
     }
 
     if (value === 'finished') {
+      button.disabled = false;
       div.classList.add('text-success');
       div.textContent = i18n.t('form.notifications.rssSuccess');
-      button.disabled = false;
       form.reset();
     }
   }
