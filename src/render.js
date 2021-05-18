@@ -19,6 +19,9 @@ export default (state, input, schema) => {
 
   watchedState.form.disabledButton = true;
   const inputURL = input.value.trim();
+  console.log('inputURL =', inputURL);
+  console.log('state=', state);
+  console.log('ru.translation.fiedsURLs =', ru.translation.fiedsURLs);
 
   schema.validate({ url: inputURL })
     .catch((error) => {
