@@ -11,7 +11,7 @@ export default () => {
   const state = {
     form: {
       error: '',
-      readOnlyButton: false,
+      disabledButton: false,
     },
     postsInfo: {
       actualId: '',

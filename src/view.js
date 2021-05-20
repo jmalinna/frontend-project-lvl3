@@ -64,11 +64,13 @@ export default (state, i18n) => onChange(state, (path, value) => {
     return type === 'button' ? showModalWindow(eventTarget) : markLinkAsViewed(eventTarget);
   };
 
-  if (path === 'form.readOnlyButton') {
+  if (path === 'form.disabledButton') {
     if (value === true) {
-      button.setAttribute('readonly', '');
+      button.disabled = true;
+      input.setAttribute('readonly', true);
     } else {
-      button.removeAttribute('readonly');
+      button.disabled = false;
+      input.removeAttribute('readonly');
     }
   }
 
@@ -80,7 +82,8 @@ export default (state, i18n) => onChange(state, (path, value) => {
       input.classList.add('is-invalid');
       div.classList.add('text-danger');
     }
-    button.removeAttribute('readonly');
+    button.disabled = false;
+    input.removeAttribute('readonly');
     div.textContent = value;
   }
 
@@ -129,7 +132,8 @@ export default (state, i18n) => onChange(state, (path, value) => {
     }
 
     if (value === 'finished') {
-      button.removeAttribute('readonly');
+      button.disabled = false;
+      input.removeAttribute('readonly');
       div.classList.add('text-success');
       div.textContent = i18n.t('form.notifications.rssSuccess');
       form.reset();

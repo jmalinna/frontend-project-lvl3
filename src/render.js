@@ -5,7 +5,7 @@ import addPosts from './addPosts.js';
 
 export default (state, input, schema, i18n) => {
   const watchedState = view(state, i18n);
-  watchedState.form.readOnlyButton = true;
+  watchedState.form.disabledButton = true;
 
   const addFeed = (id, parsedRSS, url) => {
     watchedState.fiedsURLs.push({ id, url });
@@ -66,6 +66,6 @@ export default (state, input, schema, i18n) => {
     })
     .catch((error) => {
       console.log(error);
-      watchedState.form.readOnlyButton = false;
+      watchedState.form.disabledButton = false;
     });
 };
