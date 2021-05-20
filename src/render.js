@@ -15,6 +15,12 @@ export default (state, input, schema, i18n) => {
     });
   };
 
+  const makeRequest = (url) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`)
+    .catch(() => {
+      watchedState.form.error = i18n.t('form.errors.networkProblem');
+      throw new Error(i18n.t('form.errors.networkProblem'));
+    });
+
   watchedState.form.disabledButton = true;
   const inputURL = input.value.trim();
 
@@ -35,13 +41,7 @@ export default (state, input, schema, i18n) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(inputURL)}`)
-      .then((response) => {
-        console.log('response =', response);
-        if (response.statusText === 'OK') return response;
-        watchedState.form.error = i18n.t('form.errors.networkProblem');
-        throw new Error(i18n.t('form.errors.networkProblem'));
-      }))
+    .then(() => makeRequest(inputURL))
     .then((response) => parseRSS(response.data.contents))
     .then((parsedRSS) => {
       if (parsedRSS.querySelectorAll('item').length === 0) {

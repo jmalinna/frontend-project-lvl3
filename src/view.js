@@ -71,7 +71,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
       button.disabled = false;
     }
   }
-
+  console.log('path=', path);
   if (path === 'form.error') {
     if (value === '') {
       input.classList.remove('is-invalid');
@@ -81,7 +81,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
       div.classList.add('text-danger');
     }
     button.disabled = false;
-    div.textContent = state.form.error;
+    div.textContent = value;
   }
 
   if (path === 'postsInfo.target') {
