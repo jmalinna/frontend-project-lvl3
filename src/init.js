@@ -5,7 +5,7 @@ import i18n from 'i18next';
 import view from './view.js';
 import ru from './locales/ru.js';
 import render from './render.js';
-// import addNewRssPosts from './updatePosts.js';
+import addNewRssPosts from './updatePosts.js';
 
 export default () => {
   const state = {
@@ -38,7 +38,8 @@ export default () => {
   const input = document.querySelector('input');
   const posts = document.querySelector('.posts');
 
-  i18n.init({
+  const newInstance = i18n.createInstance();
+  newInstance.init({
     lng: 'ru',
     debug: true,
     resources: {
@@ -50,7 +51,7 @@ export default () => {
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
-        render(state, input, schema);
+        render(state, input, schema, newInstance);
       });
 
       posts.addEventListener('click', (e) => {
@@ -59,5 +60,5 @@ export default () => {
       });
     });
 
-  // setTimeout(() => addNewRssPosts(state), 5000);
+  setTimeout(() => addNewRssPosts(state), 5000);
 };

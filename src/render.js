@@ -1,12 +1,12 @@
-import i18n from 'i18next';
+// import i18n from 'i18next';
 import axios from 'axios';
 import view from './view.js';
 import ru from './locales/ru.js';
 import parseRSS from './parseRSS.js';
 import addPosts from './addPosts.js';
 
-export default (state, input, schema) => {
-  const watchedState = view(state);
+export default (state, input, schema, i18n) => {
+  const watchedState = view(state, i18n);
   const addFeed = (id, parsedRSS, url) => {
     ru.translation.fiedsURLs.push({ id, url });
     const fiedDescription = parsedRSS.querySelector('description').textContent;

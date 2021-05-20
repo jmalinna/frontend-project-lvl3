@@ -1,8 +1,8 @@
 import onChange from 'on-change';
-import i18n from 'i18next';
+// import i18n from 'i18next';
 import ru from './locales/ru.js';
 
-export default (state) => onChange(state, (path, value) => {
+export default (state, i18n) => onChange(state, (path, value) => {
   const form = document.querySelector('form');
   const input = document.querySelector('input');
   const div = document.querySelector('.feedback');
