@@ -11,7 +11,7 @@ export default () => {
   const state = {
     form: {
       error: '',
-      disabledButton: false,
+      readOnlyButton: false,
     },
     postsInfo: {
       actualId: '',
@@ -60,7 +60,6 @@ export default () => {
 
       posts.addEventListener('click', (e) => {
         watchedState.postsInfo.target = e.target;
-        console.log('e.target=', e.target);
         watchedState.postsInfo.viewedPostsIds.push(e.target.id);
       });
     });
