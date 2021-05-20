@@ -14,9 +14,5 @@ export default {
         rssSuccess: 'RSS успешно загружен',
       },
     },
-    posts: [],
-    updatedPosts: [],
-    fieds: [],
-    fiedsURLs: [],
   },
 };

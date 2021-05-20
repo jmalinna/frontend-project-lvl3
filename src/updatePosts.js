@@ -1,6 +1,5 @@
 /* eslint-disable consistent-return */
 import axios from 'axios';
-import ru from './locales/ru.js';
 import view from './view.js';
 import parseRSS from './parseRSS.js';
 import addPosts from './addPosts.js';
@@ -8,7 +7,7 @@ import addPosts from './addPosts.js';
 const addNewRssPosts = (state) => {
   const watchedState = view(state);
 
-  ru.translation.fiedsURLs.forEach((url) => {
+  state.fiedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
     axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url.url)}`)
       .then((response) => parseRSS(response.data))
@@ -16,13 +15,13 @@ const addNewRssPosts = (state) => {
       .then((items) => {
       // eslint-disable-next-line array-callback-return
         Array.from(items).filter((item) => {
-          const samePost = ru.translation.posts.filter((post) => post.link === item.querySelector('link').textContent);
+          const samePost = state.posts.filter((post) => post.link === item.querySelector('link').textContent);
           if (samePost.length === 0) return item;
         });
       })
       .then((newItems) => {
         if (newItems) {
-          const id = watchedState.posts.newPostsId;
+          const id = watchedState.postsInfo.newPostsId;
           addPosts(id, newItems, 'updatedPosts', state);
           watchedState.state = 'updating';
         }

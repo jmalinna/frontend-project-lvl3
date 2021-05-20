@@ -1,5 +1,4 @@
 import view from './view.js';
-import ru from './locales/ru.js';
 
 const addPosts = (id, items, postsName, state) => {
   const watchedState = view(state);
@@ -7,14 +6,15 @@ const addPosts = (id, items, postsName, state) => {
     const title = item.querySelector('title').textContent;
     const description = item.querySelector('description').textContent;
     const link = item.querySelector('link').textContent;
-    ru.translation[postsName].push({
+    console.log('state[postsName] = ', state[postsName]);
+    state[postsName].push({
       id,
-      postId: watchedState.posts.postId,
+      postId: watchedState.postsInfo.postId,
       title,
       description,
       link,
     });
-    watchedState.posts.postId += 1;
+    watchedState.postsInfo.postId += 1;
   });
 };
 export default addPosts;

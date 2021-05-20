@@ -13,7 +13,7 @@ export default () => {
       error: '',
       disabledButton: false,
     },
-    posts: {
+    postsInfo: {
       actualId: '',
       newPostsId: '',
       target: '',
@@ -21,6 +21,10 @@ export default () => {
       commonId: 1,
       postId: 1,
     },
+    posts: [],
+    updatedPosts: [],
+    fieds: [],
+    fiedsURLs: [],
     state: 'inactive',
   };
 
@@ -55,8 +59,9 @@ export default () => {
       });
 
       posts.addEventListener('click', (e) => {
-        watchedState.posts.target = e.target;
-        watchedState.posts.viewedPostsIds.push(e.target.id);
+        watchedState.postsInfo.target = e.target;
+        console.log('e.target=', e.target);
+        watchedState.postsInfo.viewedPostsIds.push(e.target.id);
       });
     });
 

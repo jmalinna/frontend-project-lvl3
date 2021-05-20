@@ -1,6 +1,4 @@
 import onChange from 'on-change';
-// import i18n from 'i18next';
-import ru from './locales/ru.js';
 
 export default (state, i18n) => onChange(state, (path, value) => {
   const form = document.querySelector('form');
@@ -12,8 +10,8 @@ export default (state, i18n) => onChange(state, (path, value) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
     const h3 = document.createElement('h3');
-    const actualFied = ru.translation.fieds.filter(
-      (fied) => fied.id === innerState.posts.actualId,
+    const actualFied = innerState.fieds.filter(
+      (fied) => fied.id === innerState.postsInfo.actualId,
     );
     const [fied] = actualFied;
     h3.textContent = fied.title;
@@ -22,6 +20,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
     li.prepend(h3, p);
     return li;
   };
+
   const createLiPostElements = (actualPosts, ulElement) => {
     actualPosts.reverse().forEach((post) => {
       const liElement = document.createElement('li');
@@ -33,15 +32,21 @@ export default (state, i18n) => onChange(state, (path, value) => {
     });
     return ulElement;
   };
+
   const render = (eventTarget) => {
     const type = eventTarget.getAttribute('type');
+
     const markLinkAsViewed = (target) => {
       target.classList.replace('font-weight-bold', 'font-weight-normal');
     };
+
     const showModalWindow = (target) => {
       const { id } = target.dataset;
-      const activePost = ru.translation.posts.filter((post) => post.postId === Number(id));
+      console.log('id =', id);
+      const activePost = state.posts.filter((post) => post.postId === Number(id));
+      console.log('activePost = ', activePost);
       const [post] = activePost;
+      console.log('post = ', post);
       const h5 = document.querySelector('.modal-title');
       h5.textContent = post.title;
       const modalBody = document.querySelector('.modal-body');
@@ -79,8 +84,8 @@ export default (state, i18n) => onChange(state, (path, value) => {
     div.textContent = state.form.error;
   }
 
-  if (path === 'posts.target') {
-    render(state.posts.target);
+  if (path === 'postsInfo.target') {
+    render(state.postsInfo.target);
   }
 
   if (path === 'state') {
@@ -99,7 +104,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
       h2Element.textContent = i18n.t('postsHeader');
       const ulElement = document.createElement('ul');
       ulElement.classList.add('list-group');
-      const actualPosts = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
+      const actualPosts = state.posts.filter((post) => post.id === state.postsInfo.actualId);
       createLiPostElements(actualPosts, ulElement);
       posts.prepend(h2Element, ulElement);
     }
@@ -109,17 +114,18 @@ export default (state, i18n) => onChange(state, (path, value) => {
       const liEl = createLiFiedElement(state);
       ulEl.prepend(liEl);
       const ulElPosts = posts.querySelector('ul');
-      const actualPosts2 = ru.translation.posts.filter((post) => post.id === state.posts.actualId);
+      const actualPosts2 = state.posts.filter((post) => post.id === state.postsInfo.actualId);
       createLiPostElements(actualPosts2, ulElPosts);
     }
 
     if (value === 'updating') {
       const ulElPosts2 = posts.querySelector('ul');
-      createLiPostElements(ru.translation.updatedPosts, ulElPosts2);
-      ru.translation.updatedPosts.forEach((post) => {
-        ru.translation.posts.push(post);
+      createLiPostElements(state.updatedPosts, ulElPosts2);
+      state.updatedPosts.forEach((post) => {
+        state.posts.push(post);
       });
-      ru.translation.updatedPosts = [];
+      const innerState = state;
+      innerState.updatedPosts = [];
     }
 
     if (value === 'finished') {
