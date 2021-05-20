@@ -24,9 +24,6 @@ export default (state, input, schema, i18n) => {
 
   const inputURL = input.value.trim();
 
-  console.log('inputURL =', inputURL);
-  console.log('state=', state);
-
   schema.validate({ url: inputURL })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
@@ -50,10 +47,10 @@ export default (state, input, schema, i18n) => {
       }
       const id = watchedState.postsInfo.commonId;
       watchedState.postsInfo.actualId = id;
-      console.log('id = ', id);
+
       addFeed(id, parsedRSS, inputURL);
       const items = parsedRSS.querySelectorAll('item');
-      console.log('items = ', items);
+
       addPosts(id, items, 'posts', state);
       watchedState.postsInfo.commonId += 1;
 
@@ -64,8 +61,7 @@ export default (state, input, schema, i18n) => {
       }
       watchedState.state = 'finished';
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       watchedState.form.disabledButton = false;
     });
 };

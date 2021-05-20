@@ -42,11 +42,8 @@ export default (state, i18n) => onChange(state, (path, value) => {
 
     const showModalWindow = (target) => {
       const { id } = target.dataset;
-      console.log('id =', id);
       const activePost = state.posts.filter((post) => post.postId === Number(id));
-      console.log('activePost = ', activePost);
       const [post] = activePost;
-      console.log('post = ', post);
       const h5 = document.querySelector('.modal-title');
       h5.textContent = post.title;
       const modalBody = document.querySelector('.modal-body');
