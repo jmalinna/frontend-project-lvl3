@@ -6,17 +6,17 @@ export default (state, i18n) => onChange(state, (path, value) => {
   const div = document.querySelector('.feedback');
   const button = document.querySelector('button[type="submit"]');
 
-  const createLiFiedElement = (innerState) => {
+  const createLiFeedElement = (innerState) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
     const h3 = document.createElement('h3');
-    const actualFied = innerState.fieds.filter(
-      (fied) => fied.id === innerState.postsInfo.actualId,
+    const actualFeed = innerState.feeds.filter(
+      (feed) => feed.id === innerState.postsInfo.actualId,
     );
-    const [fied] = actualFied;
-    h3.textContent = fied.title;
+    const [feed] = actualFeed;
+    h3.textContent = feed.title;
     const p = document.createElement('p');
-    p.textContent = fied.description;
+    p.textContent = feed.description;
     li.prepend(h3, p);
     return li;
   };
@@ -44,12 +44,14 @@ export default (state, i18n) => onChange(state, (path, value) => {
       const { id } = target.dataset;
       const activePost = state.posts.filter((post) => post.postId === Number(id));
       const [post] = activePost;
+
       const h5 = document.querySelector('.modal-title');
       h5.textContent = post.title;
       const modalBody = document.querySelector('.modal-body');
       modalBody.textContent = post.description;
       const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
       aFooterElement.setAttribute('href', post.link);
+
       const container = document.querySelector('.fade');
       container.classList.add('show');
       container.setAttribute('aria-modal', 'true');
@@ -94,33 +96,38 @@ export default (state, i18n) => onChange(state, (path, value) => {
 
     if (value === 'initialization') {
       const h2 = document.createElement('h2');
-      h2.textContent = i18n.t('fiedsHeader');
+      h2.textContent = i18n.t('feedsHeader');
+
       const ul = document.createElement('ul');
       ul.classList.add('list-group', 'mb-5');
-      const li = createLiFiedElement(state);
+
+      const li = createLiFeedElement(state);
       ul.append(li);
       feeds.prepend(h2, ul);
+
       const h2Element = document.createElement('h2');
       h2Element.textContent = i18n.t('postsHeader');
       const ulElement = document.createElement('ul');
       ulElement.classList.add('list-group');
+
       const actualPosts = state.posts.filter((post) => post.id === state.postsInfo.actualId);
       createLiPostElements(actualPosts, ulElement);
       posts.prepend(h2Element, ulElement);
     }
 
+    const ulElPosts = posts.querySelector('ul');
+
     if (value === 'adding') {
-      const ulEl = feeds.querySelector('ul');
-      const liEl = createLiFiedElement(state);
-      ulEl.prepend(liEl);
-      const ulElPosts = posts.querySelector('ul');
+      const ulElFeeds = feeds.querySelector('ul');
+      const liElFeeds = createLiFeedElement(state);
+      ulElFeeds.prepend(liElFeeds);
+
       const actualPosts2 = state.posts.filter((post) => post.id === state.postsInfo.actualId);
       createLiPostElements(actualPosts2, ulElPosts);
     }
 
     if (value === 'updating') {
-      const ulElPosts2 = posts.querySelector('ul');
-      createLiPostElements(state.updatedPosts, ulElPosts2);
+      createLiPostElements(state.updatedPosts, ulElPosts);
       state.updatedPosts.forEach((post) => {
         state.posts.push(post);
       });

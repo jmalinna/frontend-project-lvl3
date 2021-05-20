@@ -7,7 +7,7 @@ import addPosts from './addPosts.js';
 const addNewRssPosts = (state) => {
   const watchedState = view(state);
 
-  state.fiedsURLs.forEach((url) => {
+  state.feedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
     axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url.url)}`)
       .then((response) => parseRSS(response.data))

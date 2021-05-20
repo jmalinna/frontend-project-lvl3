@@ -23,8 +23,8 @@ export default () => {
     },
     posts: [],
     updatedPosts: [],
-    fieds: [],
-    fiedsURLs: [],
+    feeds: [],
+    feedsURLs: [],
     state: 'inactive',
   };
 

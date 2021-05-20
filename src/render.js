@@ -5,14 +5,16 @@ import addPosts from './addPosts.js';
 
 export default (state, input, schema, i18n) => {
   const watchedState = view(state, i18n);
+  const inputURL = input.value.trim();
   watchedState.form.disabledButton = true;
 
   const addFeed = (id, parsedRSS, url) => {
-    watchedState.fiedsURLs.push({ id, url });
-    const fiedDescription = parsedRSS.querySelector('description').textContent;
-    const fiedTitle = parsedRSS.querySelector('title').textContent;
-    watchedState.fieds.push({
-      id, title: fiedTitle, description: fiedDescription, link: url,
+    watchedState.feedsURLs.push({ id, url });
+    const feedDescription = parsedRSS.querySelector('description').textContent;
+    const feedTitle = parsedRSS.querySelector('title').textContent;
+
+    watchedState.feeds.push({
+      id, title: feedTitle, description: feedDescription, link: url,
     });
   };
 
@@ -22,14 +24,12 @@ export default (state, input, schema, i18n) => {
       throw new Error(i18n.t('form.errors.networkProblem'));
     });
 
-  const inputURL = input.value.trim();
-
   schema.validate({ url: inputURL })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
       throw new Error(i18n.t(error.errors.join('')));
     })
-    .then(() => watchedState.fiedsURLs.filter((item) => item.url === inputURL))
+    .then(() => watchedState.feedsURLs.filter((item) => item.url === inputURL))
     .then((existingURLs) => {
       if (existingURLs.length === 0) {
         watchedState.form.error = '';
@@ -54,7 +54,7 @@ export default (state, input, schema, i18n) => {
       addPosts(id, items, 'posts', state);
       watchedState.postsInfo.commonId += 1;
 
-      if (watchedState.fiedsURLs.length === 1) {
+      if (watchedState.feedsURLs.length === 1) {
         watchedState.state = 'initialization';
       } else {
         watchedState.state = 'adding';
