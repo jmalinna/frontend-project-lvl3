@@ -16,7 +16,7 @@ export default () => {
     postsInfo: {
       actualId: '',
       newPostsId: '',
-      target: '',
+      target: {},
       viewedPostsIds: [],
       commonId: 1,
       postId: 1,
@@ -38,31 +38,32 @@ export default () => {
     url: yup.string().url(),
   });
 
-  const form = document.querySelector('form');
-  const input = document.querySelector('input');
+  const form = document.querySelector('.rss-form');
+  const inputURL = document.querySelector('input[aria-label="url"]');
   const posts = document.querySelector('.posts');
 
-  const newInstance = i18n.createInstance();
-  newInstance.init({
+  const i18nInstance = i18n.createInstance();
+  i18nInstance.init({
     lng: 'ru',
-    debug: true,
+    debug: false,
     resources: {
       ru,
     },
   })
     .then(() => {
-      const watchedState = view(state);
+      const watchedState = view(state, i18nInstance);
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        render(state, input, schema, newInstance);
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        render(watchedState, inputURL, schema, i18nInstance);
       });
 
-      posts.addEventListener('click', (e) => {
-        watchedState.postsInfo.target = e.target;
-        watchedState.postsInfo.viewedPostsIds.push(e.target.id);
+      posts.addEventListener('click', (event) => {
+        watchedState.postsInfo.target.type = event.target.getAttribute('type');
+        watchedState.postsInfo.target.id = event.target.dataset.id;
+        watchedState.postsInfo.viewedPostsIds.push(event.target.id);
       });
+
+      setTimeout(() => addNewRssPosts(watchedState), 5000);
     });
-
-  setTimeout(() => addNewRssPosts(state), 5000);
 };

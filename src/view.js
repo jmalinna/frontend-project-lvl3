@@ -1,22 +1,22 @@
 import onChange from 'on-change';
 
 export default (state, i18n) => onChange(state, (path, value) => {
-  const form = document.querySelector('form');
-  const input = document.querySelector('input');
-  const div = document.querySelector('.feedback');
-  const button = document.querySelector('button[type="submit"]');
+  const form = document.querySelector('.rss-form');
+  const inputURL = document.querySelector('input[aria-label="url"]');
+  const containerFeedback = document.querySelector('.feedback');
+  const addButton = document.querySelector('button[type="submit"]');
 
   const createLiFeedElement = (innerState) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
     const h3 = document.createElement('h3');
-    const actualFeed = innerState.feeds.filter(
+    const actualFeed = innerState.feeds.find(
       (feed) => feed.id === innerState.postsInfo.actualId,
     );
-    const [feed] = actualFeed;
-    h3.textContent = feed.title;
+
+    h3.textContent = actualFeed.title;
     const p = document.createElement('p');
-    p.textContent = feed.description;
+    p.textContent = actualFeed.description;
     li.prepend(h3, p);
     return li;
   };
@@ -25,7 +25,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
     actualPosts.reverse().forEach((post) => {
       const liElement = document.createElement('li');
       liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
-      liElement.innerHTML = `<a href="${post.link}" class="font-weight-bold" data-id="${post.postId}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${post.postId}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
+      liElement.innerHTML = `<a href="${post.url}" class="font-weight-bold" data-id="${post.postId}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${post.postId}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
       const aElement = liElement.querySelector('a');
       aElement.textContent = post.title;
       ulElement.prepend(liElement);
@@ -33,61 +33,60 @@ export default (state, i18n) => onChange(state, (path, value) => {
     return ulElement;
   };
 
-  const render = (eventTarget) => {
-    const type = eventTarget.getAttribute('type');
+  const render = () => {
+    const { type, id } = state.postsInfo.target;
+    const aElement = document.querySelector(`a[data-id="${id}"]`);
 
-    const markLinkAsViewed = (target) => {
-      target.classList.replace('font-weight-bold', 'font-weight-normal');
+    const markUrlAsViewed = (element) => {
+      element.classList.replace('font-weight-bold', 'font-weight-normal');
     };
 
-    const showModalWindow = (target) => {
-      const { id } = target.dataset;
-      const activePost = state.posts.filter((post) => post.postId === Number(id));
-      const [post] = activePost;
+    const showModalWindow = (elementId) => {
+      const activePost = state.posts.find((post) => post.postId === Number(elementId));
 
       const h5 = document.querySelector('.modal-title');
-      h5.textContent = post.title;
+      h5.textContent = activePost.title;
       const modalBody = document.querySelector('.modal-body');
-      modalBody.textContent = post.description;
+      modalBody.textContent = activePost.description;
       const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
-      aFooterElement.setAttribute('href', post.link);
+      aFooterElement.setAttribute('href', activePost.url);
 
       const container = document.querySelector('.fade');
       container.classList.add('show');
       container.setAttribute('aria-modal', 'true');
       container.setAttribute('style', 'display: block; padding-right: 15px;');
       container.removeAttribute('aria-hidden');
-      const aPostElement = target.previousElementSibling;
-      markLinkAsViewed(aPostElement);
+
+      markUrlAsViewed(aElement);
     };
-    return type === 'button' ? showModalWindow(eventTarget) : markLinkAsViewed(eventTarget);
+    return type === 'button' ? showModalWindow(id) : markUrlAsViewed(aElement);
   };
 
   if (path === 'form.disabledButton') {
     if (value === true) {
-      button.disabled = true;
-      input.setAttribute('readonly', true);
+      addButton.disabled = true;
+      inputURL.setAttribute('readonly', true);
     } else {
-      button.disabled = false;
-      input.removeAttribute('readonly');
+      addButton.disabled = false;
+      inputURL.removeAttribute('readonly');
     }
   }
 
   if (path === 'form.error') {
     if (value === '') {
-      input.classList.remove('is-invalid');
-      div.classList.remove('text-danger');
+      inputURL.classList.remove('is-invalid');
+      containerFeedback.classList.remove('text-danger');
     } else {
-      input.classList.add('is-invalid');
-      div.classList.add('text-danger');
+      inputURL.classList.add('is-invalid');
+      containerFeedback.classList.add('text-danger');
     }
-    button.disabled = false;
-    input.removeAttribute('readonly');
-    div.textContent = value;
+    addButton.disabled = false;
+    inputURL.removeAttribute('readonly');
+    containerFeedback.textContent = value;
   }
 
-  if (path === 'postsInfo.target') {
-    render(state.postsInfo.target);
+  if (path === 'postsInfo.target.id') {
+    render();
   }
 
   if (path === 'state') {
@@ -109,7 +108,6 @@ export default (state, i18n) => onChange(state, (path, value) => {
       h2Element.textContent = i18n.t('postsHeader');
       const ulElement = document.createElement('ul');
       ulElement.classList.add('list-group');
-
       const actualPosts = state.posts.filter((post) => post.id === state.postsInfo.actualId);
       createLiPostElements(actualPosts, ulElement);
       posts.prepend(h2Element, ulElement);
@@ -136,10 +134,10 @@ export default (state, i18n) => onChange(state, (path, value) => {
     }
 
     if (value === 'finished') {
-      button.disabled = false;
-      input.removeAttribute('readonly');
-      div.classList.add('text-success');
-      div.textContent = i18n.t('form.notifications.rssSuccess');
+      addButton.disabled = false;
+      inputURL.removeAttribute('readonly');
+      containerFeedback.classList.add('text-success');
+      containerFeedback.textContent = i18n.t('form.notifications.rssSuccess');
       form.reset();
     }
   }

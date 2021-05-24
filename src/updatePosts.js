@@ -1,32 +1,28 @@
-/* eslint-disable consistent-return */
 import axios from 'axios';
-import view from './view.js';
-import parseRSS from './parseRSS.js';
-import addPosts from './addPosts.js';
+import { differenceBy } from 'lodash';
+import parseXML from './parseXML.js';
+import addPostsToState from './addPosts.js';
 
-const addNewRssPosts = (state) => {
-  const watchedState = view(state);
+const addNewRssPosts = (watcher) => {
+  const watchedState = watcher;
+  const makeRequest = (url) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`);
 
-  state.feedsURLs.forEach((url) => {
+  watchedState.feedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
-    axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url.url)}`)
-      .then((response) => parseRSS(response.data))
-      .then((parsedRSS) => parsedRSS.querySelectorAll('item'))
-      .then((items) => {
-      // eslint-disable-next-line array-callback-return
-        Array.from(items).filter((item) => {
-          const samePost = state.posts.filter((post) => post.link === item.querySelector('link').textContent);
-          if (samePost.length === 0) return item;
-        });
+    makeRequest(url.url)
+      .then((response) => parseXML(response.data.contents))
+      .then((data) => {
+        const posts = data.filter((item) => !item.role);
+        return differenceBy(posts, watchedState.posts, 'url');
       })
-      .then((newItems) => {
-        if (newItems) {
+      .then((newPosts) => {
+        if (newPosts) {
           const id = watchedState.postsInfo.newPostsId;
-          addPosts(id, newItems, 'updatedPosts', state);
+          addPostsToState(id, newPosts, 'updatedPosts', watchedState);
           watchedState.state = 'updating';
         }
       });
   });
-  setTimeout(() => addNewRssPosts(state), 5000);
+  setTimeout(() => addNewRssPosts(watchedState), 5000);
 };
 export default addNewRssPosts;

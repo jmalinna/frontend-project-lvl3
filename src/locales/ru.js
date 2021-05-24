@@ -1,6 +1,6 @@
 export default {
   translation: {
-    fiedsHeader: 'Фиды',
+    feedsHeader: 'Фиды',
     postsHeader: 'Посты',
     form: {
       errors: {

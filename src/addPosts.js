@@ -1,21 +1,17 @@
-import view from './view.js';
+const addPostsToState = (id, data, postsName, watcher) => {
+  const watchedState = watcher;
 
-const addPosts = (id, items, postsName, state) => {
-  const watchedState = view(state);
-
-  items.forEach((item) => {
-    const title = item.querySelector('title').textContent;
-    const description = item.querySelector('description').textContent;
-    const link = item.querySelector('link').textContent;
-
-    state[postsName].push({
-      id,
-      postId: watchedState.postsInfo.postId,
-      title,
-      description,
-      link,
-    });
-    watchedState.postsInfo.postId += 1;
+  data.forEach((item) => {
+    if (!item.role) {
+      watchedState[postsName].push({
+        id,
+        postId: watchedState.postsInfo.postId,
+        title: item.title,
+        description: item.description,
+        url: item.url,
+      });
+      watchedState.postsInfo.postId += 1;
+    }
   });
 };
-export default addPosts;
+export default addPostsToState;

@@ -1,35 +1,31 @@
 import axios from 'axios';
-import view from './view.js';
-import parseRSS from './parseRSS.js';
-import addPosts from './addPosts.js';
+import parseXML from './parseXML.js';
+import addPostsToState from './addPosts.js';
 
-export default (state, input, schema, i18n) => {
-  const watchedState = view(state, i18n);
-  const inputURL = input.value.trim();
+export default (watcher, input, schema, i18n) => {
+  const watchedState = watcher;
+  const url = input.value.trim();
   watchedState.form.disabledButton = true;
 
-  const addFeed = (id, parsedRSS, url) => {
-    watchedState.feedsURLs.push({ id, url });
-    const feedDescription = parsedRSS.querySelector('description').textContent;
-    const feedTitle = parsedRSS.querySelector('title').textContent;
-
+  const addFeedToState = (id, data, link) => {
+    const feed = data.find((item) => item.role === 'feed');
     watchedState.feeds.push({
-      id, title: feedTitle, description: feedDescription, link: url,
+      id, title: feed.title, description: feed.description, url: link,
     });
   };
 
-  const makeRequest = (url) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`)
+  const makeRequest = (URL) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(URL)}`)
     .catch(() => {
       watchedState.form.error = i18n.t('form.errors.networkProblem');
       throw new Error(i18n.t('form.errors.networkProblem'));
     });
 
-  schema.validate({ url: inputURL })
+  schema.validate({ url })
     .catch((error) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
       throw new Error(i18n.t(error.errors.join('')));
     })
-    .then(() => watchedState.feedsURLs.filter((item) => item.url === inputURL))
+    .then(() => watchedState.feedsURLs.filter((item) => item.url === url))
     .then((existingURLs) => {
       if (existingURLs.length === 0) {
         watchedState.form.error = '';
@@ -38,20 +34,16 @@ export default (state, input, schema, i18n) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => makeRequest(inputURL))
-    .then((response) => parseRSS(response.data.contents))
-    .then((parsedRSS) => {
-      if (parsedRSS.querySelectorAll('item').length === 0) {
-        watchedState.form.error = i18n.t('form.errors.invalidRSS');
-        throw new Error(i18n.t('form.errors.invalidRSS'));
-      }
+    .then(() => makeRequest(url))
+    .then((response) => parseXML(response.data.contents))
+    .then((data) => {
       const id = watchedState.postsInfo.commonId;
       watchedState.postsInfo.actualId = id;
+      watchedState.feedsURLs.push({ id, url });
 
-      addFeed(id, parsedRSS, inputURL);
-      const items = parsedRSS.querySelectorAll('item');
+      addFeedToState(id, data, url);
+      addPostsToState(id, data, 'posts', watchedState);
 
-      addPosts(id, items, 'posts', state);
       watchedState.postsInfo.commonId += 1;
 
       if (watchedState.feedsURLs.length === 1) {
@@ -61,7 +53,11 @@ export default (state, input, schema, i18n) => {
       }
       watchedState.state = 'finished';
     })
-    .catch(() => {
+    .catch((error) => {
+      // console.log(error);
+      if (error.message === 'invalid rss') {
+        watchedState.form.error = i18n.t('form.errors.invalidRSS');
+      }
       watchedState.form.disabledButton = false;
     });
 };
