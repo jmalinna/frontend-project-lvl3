@@ -25,9 +25,24 @@ export default (state, i18n) => onChange(state, (path, value) => {
     actualPosts.reverse().forEach((post) => {
       const liElement = document.createElement('li');
       liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
-      liElement.innerHTML = `<a href="${post.url}" class="font-weight-bold" data-id="${post.postId}" target="_blank"rel="noopenernoreferrer"></a><button type="button" class="btn btn-primary btn-sm" data-id="${post.postId}" data-toggle="modal" data-target="#modal">Просмотр</button>`;
-      const aElement = liElement.querySelector('a');
+
+      const aElement = document.createElement('a');
+      aElement.setAttribute('href', post.url);
+      aElement.setAttribute('data-id', post.postId);
+      aElement.setAttribute('rel', 'noopener noreferrer');
+      aElement.setAttribute('target', '_blank');
+      aElement.classList.add('font-weight-bold');
       aElement.textContent = post.title;
+
+      const button = document.createElement('button');
+      button.setAttribute('type', 'button');
+      button.setAttribute('data-id', post.postId);
+      button.setAttribute('data-toggle', 'modal');
+      button.setAttribute('data-target', '#modal');
+      button.classList.add('btn', 'btn-primary', 'btn-sm');
+      button.textContent = i18n.t('postsButtonText');
+
+      liElement.append(aElement, button);
       ulElement.prepend(liElement);
     });
     return ulElement;

@@ -2,6 +2,7 @@ export default {
   translation: {
     feedsHeader: 'Фиды',
     postsHeader: 'Посты',
+    postsButtonText: 'Просмотр',
     form: {
       errors: {
         invalidURL: 'Ссылка должна быть валидным URL',
