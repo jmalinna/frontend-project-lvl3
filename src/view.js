@@ -33,7 +33,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
     return ulElement;
   };
 
-  const render = () => {
+  const renderModalWindow = () => {
     const { type, id } = state.postsInfo.target;
     const aElement = document.querySelector(`a[data-id="${id}"]`);
 
@@ -62,34 +62,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
     return type === 'button' ? showModalWindow(id) : markUrlAsViewed(aElement);
   };
 
-  if (path === 'form.disabledButton') {
-    if (value === true) {
-      addButton.disabled = true;
-      inputURL.setAttribute('readonly', true);
-    } else {
-      addButton.disabled = false;
-      inputURL.removeAttribute('readonly');
-    }
-  }
-
-  if (path === 'form.error') {
-    if (value === '') {
-      inputURL.classList.remove('is-invalid');
-      containerFeedback.classList.remove('text-danger');
-    } else {
-      inputURL.classList.add('is-invalid');
-      containerFeedback.classList.add('text-danger');
-    }
-    addButton.disabled = false;
-    inputURL.removeAttribute('readonly');
-    containerFeedback.textContent = value;
-  }
-
-  if (path === 'postsInfo.target.id') {
-    render();
-  }
-
-  if (path === 'state') {
+  const renderState = () => {
     const feeds = document.querySelector('.feeds');
     const posts = document.querySelector('.posts');
 
@@ -140,5 +113,44 @@ export default (state, i18n) => onChange(state, (path, value) => {
       containerFeedback.textContent = i18n.t('form.notifications.rssSuccess');
       form.reset();
     }
+  };
+
+  const disableForm = () => {
+    if (value) {
+      addButton.disabled = true;
+      inputURL.setAttribute('readonly', true);
+    } else {
+      addButton.disabled = false;
+      inputURL.removeAttribute('readonly');
+    }
+  };
+
+  const renderError = () => {
+    if (!value) {
+      inputURL.classList.remove('is-invalid');
+      containerFeedback.classList.remove('text-danger');
+    } else {
+      inputURL.classList.add('is-invalid');
+      containerFeedback.classList.add('text-danger');
+    }
+    addButton.disabled = false;
+    inputURL.removeAttribute('readonly');
+    containerFeedback.textContent = value;
+  };
+
+  switch (path) {
+    case 'form.disabledButton':
+      disableForm();
+      break;
+    case 'form.error':
+      renderError();
+      break;
+    case 'postsInfo.target.id':
+      renderModalWindow();
+      break;
+    case 'state':
+      renderState();
+      break;
+    default:
   }
 });
