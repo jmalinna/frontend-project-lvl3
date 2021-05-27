@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { differenceBy } from 'lodash';
-import parseXML from './parseXML.js';
+import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 
 const addNewRssPosts = (watcher) => {
@@ -10,15 +10,12 @@ const addNewRssPosts = (watcher) => {
   watchedState.feedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
     makeRequest(url.url)
-      .then((response) => parseXML(response.data.contents))
-      .then((data) => {
-        const posts = data.filter((item) => !item.role);
-        return differenceBy(posts, watchedState.posts, 'url');
-      })
+      .then((response) => parseRSS(response.data.contents))
+      .then((data) => differenceBy(data.items, watchedState.posts, 'url'))
       .then((newPosts) => {
         if (newPosts) {
           const id = watchedState.postsInfo.newPostsId;
-          addPostsToState(id, newPosts, 'updatedPosts', watchedState);
+          addPostsToState(id, { items: newPosts }, 'updatedPosts', watchedState);
           watchedState.state = 'updating';
         }
       });

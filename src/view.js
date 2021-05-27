@@ -1,8 +1,6 @@
 import onChange from 'on-change';
 
-export default (state, i18n) => onChange(state, (path, value) => {
-  const form = document.querySelector('.rss-form');
-  const inputURL = document.querySelector('input[aria-label="url"]');
+export default (state, i18n, form, inputURL) => onChange(state, (path, value) => {
   const containerFeedback = document.querySelector('.feedback');
   const addButton = document.querySelector('button[type="submit"]');
 
@@ -26,13 +24,13 @@ export default (state, i18n) => onChange(state, (path, value) => {
       const liElement = document.createElement('li');
       liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
 
-      const aElement = document.createElement('a');
-      aElement.setAttribute('href', post.url);
-      aElement.setAttribute('data-id', post.postId);
-      aElement.setAttribute('rel', 'noopener noreferrer');
-      aElement.setAttribute('target', '_blank');
-      aElement.classList.add('font-weight-bold');
-      aElement.textContent = post.title;
+      const link = document.createElement('a');
+      link.setAttribute('href', post.url);
+      link.setAttribute('data-id', post.postId);
+      link.setAttribute('rel', 'noopener noreferrer');
+      link.setAttribute('target', '_blank');
+      link.classList.add('font-weight-bold');
+      link.textContent = post.title;
 
       const button = document.createElement('button');
       button.setAttribute('type', 'button');
@@ -42,7 +40,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
       button.classList.add('btn', 'btn-primary', 'btn-sm');
       button.textContent = i18n.t('postsButtonText');
 
-      liElement.append(aElement, button);
+      liElement.append(link, button);
       ulElement.prepend(liElement);
     });
     return ulElement;
@@ -50,7 +48,7 @@ export default (state, i18n) => onChange(state, (path, value) => {
 
   const renderModalWindow = () => {
     const { type, id } = state.postsInfo.target;
-    const aElement = document.querySelector(`a[data-id="${id}"]`);
+    const link = document.querySelector(`a[data-id="${id}"]`);
 
     const markUrlAsViewed = (element) => {
       element.classList.replace('font-weight-bold', 'font-weight-normal');
@@ -72,9 +70,9 @@ export default (state, i18n) => onChange(state, (path, value) => {
       container.setAttribute('style', 'display: block; padding-right: 15px;');
       container.removeAttribute('aria-hidden');
 
-      markUrlAsViewed(aElement);
+      markUrlAsViewed(link);
     };
-    return type === 'button' ? showModalWindow(id) : markUrlAsViewed(aElement);
+    return type === 'button' ? showModalWindow(id) : markUrlAsViewed(link);
   };
 
   const renderState = () => {

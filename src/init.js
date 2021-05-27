@@ -51,7 +51,7 @@ export default () => {
     },
   })
     .then(() => {
-      const watchedState = view(state, i18nInstance);
+      const watchedState = view(state, i18nInstance, form, inputURL);
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();

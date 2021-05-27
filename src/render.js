@@ -1,5 +1,5 @@
 import axios from 'axios';
-import parseXML from './parseXML.js';
+import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 
 export default (watcher, input, schema, i18n) => {
@@ -8,9 +8,8 @@ export default (watcher, input, schema, i18n) => {
   watchedState.form.disabledButton = true;
 
   const addFeedToState = (id, data, link) => {
-    const feed = data.find((item) => item.role === 'feed');
     watchedState.feeds.push({
-      id, title: feed.title, description: feed.description, url: link,
+      id, title: data.feed.title, description: data.feed.description, url: link,
     });
   };
 
@@ -35,7 +34,7 @@ export default (watcher, input, schema, i18n) => {
       }
     })
     .then(() => makeRequest(url))
-    .then((response) => parseXML(response.data.contents))
+    .then((response) => parseRSS(response.data.contents))
     .then((data) => {
       const id = watchedState.postsInfo.commonId;
       watchedState.postsInfo.actualId = id;

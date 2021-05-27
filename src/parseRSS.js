@@ -1,5 +1,5 @@
-const parseXML = (xmlString) => {
-  const outputData = [];
+const parseRSS = (xmlString) => {
+  const outputData = { feed: {}, items: [] };
   const parser = new DOMParser();
   const document = parser.parseFromString(xmlString, 'application/xml');
 
@@ -8,7 +8,7 @@ const parseXML = (xmlString) => {
 
   const feedDescription = document.querySelector('description').textContent;
   const feedTitle = document.querySelector('title').textContent;
-  outputData.push({ title: feedTitle, description: feedDescription, role: 'feed' });
+  outputData.feed = { title: feedTitle, description: feedDescription };
 
   const items = document.querySelectorAll('item');
   items.forEach((item) => {
@@ -16,9 +16,9 @@ const parseXML = (xmlString) => {
     const description = item.querySelector('description').textContent;
     const url = item.querySelector('link').textContent;
 
-    outputData.push({ title, description, url });
+    outputData.items.push({ title, description, url });
   });
 
   return outputData;
 };
-export default parseXML;
+export default parseRSS;
