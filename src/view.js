@@ -1,8 +1,8 @@
 import onChange from 'on-change';
 
 export default (state, i18n, form, inputURL) => onChange(state, (path, value) => {
-  const containerFeedback = document.querySelector('.feedback');
-  const addButton = document.querySelector('button[type="submit"]');
+  const feedbackContainer = document.querySelector('.feedback');
+  const buttonAdd = document.querySelector('button[aria-label="add"]');
 
   const createLiFeedElement = (innerState) => {
     const li = document.createElement('li');
@@ -99,19 +99,19 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
       posts.prepend(h2Element, ulElement);
     }
 
-    const ulElPosts = posts.querySelector('ul');
+    const ulElementPosts = posts.querySelector('ul');
 
     if (value === 'adding') {
-      const ulElFeeds = feeds.querySelector('ul');
-      const liElFeeds = createLiFeedElement(state);
-      ulElFeeds.prepend(liElFeeds);
+      const ulElementFeeds = feeds.querySelector('ul');
+      const liElementFeeds = createLiFeedElement(state);
+      ulElementFeeds.prepend(liElementFeeds);
 
       const actualPosts2 = state.posts.filter((post) => post.id === state.postsInfo.actualId);
-      createLiPostElements(actualPosts2, ulElPosts);
+      createLiPostElements(actualPosts2, ulElementPosts);
     }
 
     if (value === 'updating') {
-      createLiPostElements(state.updatedPosts, ulElPosts);
+      createLiPostElements(state.updatedPosts, ulElementPosts);
       state.updatedPosts.forEach((post) => {
         state.posts.push(post);
       });
@@ -120,20 +120,20 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     }
 
     if (value === 'finished') {
-      addButton.disabled = false;
+      buttonAdd.disabled = false;
       inputURL.removeAttribute('readonly');
-      containerFeedback.classList.add('text-success');
-      containerFeedback.textContent = i18n.t('form.notifications.rssSuccess');
+      feedbackContainer.classList.add('text-success');
+      feedbackContainer.textContent = i18n.t('form.notifications.rssSuccess');
       form.reset();
     }
   };
 
   const disableForm = () => {
     if (value) {
-      addButton.disabled = true;
+      buttonAdd.disabled = true;
       inputURL.setAttribute('readonly', true);
     } else {
-      addButton.disabled = false;
+      buttonAdd.disabled = false;
       inputURL.removeAttribute('readonly');
     }
   };
@@ -141,14 +141,14 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
   const renderError = () => {
     if (!value) {
       inputURL.classList.remove('is-invalid');
-      containerFeedback.classList.remove('text-danger');
+      feedbackContainer.classList.remove('text-danger');
     } else {
       inputURL.classList.add('is-invalid');
-      containerFeedback.classList.add('text-danger');
+      feedbackContainer.classList.add('text-danger');
     }
-    addButton.disabled = false;
+    buttonAdd.disabled = false;
     inputURL.removeAttribute('readonly');
-    containerFeedback.textContent = value;
+    feedbackContainer.textContent = value;
   };
 
   switch (path) {
