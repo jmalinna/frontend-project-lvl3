@@ -3,13 +3,13 @@ import { differenceBy } from 'lodash';
 import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 
-const addNewRssPosts = (watcher) => {
-  const watchedState = watcher;
-  const makeRequest = (url) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`);
+const addNewRssPosts = (watchedState) => {
+  const addProxy = (url) => `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`;
 
   watchedState.feedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
-    makeRequest(url.url)
+    const proxy = addProxy(url.url);
+    axios.get(proxy)
       .then((response) => parseRSS(response.data.contents))
       .then((data) => differenceBy(data.items, watchedState.posts, 'url'))
       .then((newPosts) => {

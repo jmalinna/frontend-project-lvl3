@@ -1,6 +1,4 @@
-const addPostsToState = (id, data, postsName, watcher) => {
-  const watchedState = watcher;
-
+const addPostsToState = (id, data, postsName, watchedState) => {
   data.items.forEach((item) => {
     watchedState[postsName].push({
       id,

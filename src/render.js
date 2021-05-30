@@ -2,22 +2,18 @@ import axios from 'axios';
 import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 
-export default (watcher, input, schema, i18n) => {
-  const watchedState = watcher;
-  const url = input.value.trim();
+export default (watchedState, input, schema, i18n) => {
   watchedState.form.disabledButton = true;
+
+  const addProxy = (URL) => `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(URL)}`;
+  const url = input.value.trim();
+  const proxy = addProxy(url);
 
   const addFeedToState = (id, data, link) => {
     watchedState.feeds.push({
       id, title: data.feed.title, description: data.feed.description, url: link,
     });
   };
-
-  const makeRequest = (URL) => axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(URL)}`)
-    .catch(() => {
-      watchedState.form.error = i18n.t('form.errors.networkProblem');
-      throw new Error(i18n.t('form.errors.networkProblem'));
-    });
 
   schema.validate({ url })
     .catch((error) => {
@@ -33,7 +29,7 @@ export default (watcher, input, schema, i18n) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => makeRequest(url))
+    .then(() => axios.get(proxy))
     .then((response) => parseRSS(response.data.contents))
     .then((data) => {
       const id = watchedState.postsInfo.commonId;
@@ -56,6 +52,9 @@ export default (watcher, input, schema, i18n) => {
       // console.log(error);
       if (error.message === 'invalid rss') {
         watchedState.form.error = i18n.t('form.errors.invalidRSS');
+      }
+      if (error.message === 'Network Error') {
+        watchedState.form.error = i18n.t('form.errors.networkProblem');
       }
       watchedState.form.disabledButton = false;
     });
