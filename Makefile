@@ -1,7 +1,7 @@
 install:
 	npm install
 	
-develop:
+build:
 	npm run build
 
 lint:
