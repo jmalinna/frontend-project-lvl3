@@ -6,3 +6,12 @@
 
 ### Link to the project:
 [RSS-aggregator](https://frontend-project-lvl3-julimalinna.vercel.app)
+
+### Clone repo
+<pre>git clone https://github.com/julimalinna/frontend-project-lvl3.git</pre>
+
+### Install dependencies
+<pre>make install</pre>
+
+### Run the build
+<pre>make build</pre>
