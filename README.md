@@ -8,10 +8,15 @@
 [RSS-aggregator](https://frontend-project-lvl3-julimalinna.vercel.app)
 
 ### Clone repo
-<pre>git clone https://github.com/julimalinna/frontend-project-lvl3.git</pre>
-
+```sh
+git clone https://github.com/julimalinna/frontend-project-lvl3.git
+```
 ### Install dependencies
-<pre>make install</pre>
+```sh
+make install
+```
 
 ### Run the build
-<pre>make build</pre>
+```sh
+make build
+```
