@@ -43,7 +43,7 @@ export default () => {
   const posts = document.querySelector('.posts');
 
   const i18nInstance = i18n.createInstance();
-  i18nInstance.init({
+  return i18nInstance.init({
     lng: 'ru',
     debug: false,
     resources: {
