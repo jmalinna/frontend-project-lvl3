@@ -29,7 +29,7 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
       link.setAttribute('data-id', post.postId);
       link.setAttribute('rel', 'noopener noreferrer');
       link.setAttribute('target', '_blank');
-      link.classList.add('font-weight-bold');
+      link.classList.add('fw-bold');
       link.textContent = post.title;
 
       const button = document.createElement('button');
@@ -51,7 +51,7 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     const link = document.querySelector(`a[data-id="${id}"]`);
 
     const markUrlAsViewed = (element) => {
-      element.classList.replace('font-weight-bold', 'font-weight-normal');
+      element.classList.replace('fw-bold', 'fw-normal');
     };
 
     const showModalWindow = (elementId) => {
