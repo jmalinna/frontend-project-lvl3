@@ -78,53 +78,55 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
   const renderState = () => {
     const feeds = document.querySelector('.feeds');
     const posts = document.querySelector('.posts');
-
-    if (value === 'initialization') {
-      const h2 = document.createElement('h2');
-      h2.textContent = i18n.t('feedsHeader');
-
-      const ul = document.createElement('ul');
-      ul.classList.add('list-group', 'mb-5');
-
-      const li = createLiFeedElement(state);
-      ul.append(li);
-      feeds.prepend(h2, ul);
-
-      const h2Element = document.createElement('h2');
-      h2Element.textContent = i18n.t('postsHeader');
-      const ulElement = document.createElement('ul');
-      ulElement.classList.add('list-group');
-      const actualPosts = state.posts.filter((post) => post.id === state.postsInfo.actualId);
-      createLiPostElements(actualPosts, ulElement);
-      posts.prepend(h2Element, ulElement);
-    }
-
     const ulElementPosts = posts.querySelector('ul');
 
-    if (value === 'adding') {
-      const ulElementFeeds = feeds.querySelector('ul');
-      const liElementFeeds = createLiFeedElement(state);
-      ulElementFeeds.prepend(liElementFeeds);
+    switch (value) {
+      case 'initialization': {
+        const h2 = document.createElement('h2');
+        h2.textContent = i18n.t('feedsHeader');
 
-      const actualPosts2 = state.posts.filter((post) => post.id === state.postsInfo.actualId);
-      createLiPostElements(actualPosts2, ulElementPosts);
-    }
+        const ul = document.createElement('ul');
+        ul.classList.add('list-group', 'mb-5');
 
-    if (value === 'updating') {
-      createLiPostElements(state.updatedPosts, ulElementPosts);
-      state.updatedPosts.forEach((post) => {
-        state.posts.push(post);
-      });
-      const innerState = state;
-      innerState.updatedPosts = [];
-    }
+        const li = createLiFeedElement(state);
+        ul.append(li);
+        feeds.prepend(h2, ul);
 
-    if (value === 'finished') {
-      buttonAdd.disabled = false;
-      inputURL.removeAttribute('readonly');
-      feedbackContainer.classList.add('text-success');
-      feedbackContainer.textContent = i18n.t('form.notifications.rssSuccess');
-      form.reset();
+        const h2Element = document.createElement('h2');
+        h2Element.textContent = i18n.t('postsHeader');
+        const ulElement = document.createElement('ul');
+        ulElement.classList.add('list-group');
+        const actualPosts = state.posts.filter((post) => post.id === state.postsInfo.actualId);
+        createLiPostElements(actualPosts, ulElement);
+        posts.prepend(h2Element, ulElement);
+      }
+        break;
+      case 'adding': {
+        const ulElementFeeds = feeds.querySelector('ul');
+        const liElementFeeds = createLiFeedElement(state);
+        ulElementFeeds.prepend(liElementFeeds);
+
+        const actualPosts2 = state.posts.filter((post) => post.id === state.postsInfo.actualId);
+        createLiPostElements(actualPosts2, ulElementPosts);
+      }
+        break;
+      case 'updating': {
+        createLiPostElements(state.updatedPosts, ulElementPosts);
+        state.updatedPosts.forEach((post) => {
+          state.posts.push(post);
+        });
+        const innerState = state;
+        innerState.updatedPosts = [];
+      }
+        break;
+      case 'finished':
+        buttonAdd.disabled = false;
+        inputURL.removeAttribute('readonly');
+        feedbackContainer.classList.add('text-success');
+        feedbackContainer.textContent = i18n.t('form.notifications.rssSuccess');
+        form.reset();
+        break;
+      default:
     }
   };
 
