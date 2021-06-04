@@ -29,15 +29,15 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
       link.setAttribute('data-id', post.postId);
       link.setAttribute('rel', 'noopener noreferrer');
       link.setAttribute('target', '_blank');
-      link.classList.add('fw-bold');
+      link.classList.add('fw-bold', 'text-decoration-none', 'my-auto');
       link.textContent = post.title;
 
       const button = document.createElement('button');
       button.setAttribute('type', 'button');
       button.setAttribute('data-id', post.postId);
-      button.setAttribute('data-toggle', 'modal');
-      button.setAttribute('data-target', '#modal');
-      button.classList.add('btn', 'btn-primary', 'btn-sm');
+      button.setAttribute('data-bs-toggle', 'modal');
+      button.setAttribute('data-bs-target', '#modal');
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       button.textContent = i18n.t('postsButtonText');
 
       liElement.append(link, button);
@@ -64,10 +64,10 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
       const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
       aFooterElement.setAttribute('href', activePost.url);
 
-      const container = document.querySelector('.fade');
+      const container = document.querySelector('.modal');
       container.classList.add('show');
       container.setAttribute('aria-modal', 'true');
-      container.setAttribute('style', 'display: block; padding-right: 15px;');
+      container.setAttribute('style', 'display: block');
       container.removeAttribute('aria-hidden');
 
       markUrlAsViewed(link);
