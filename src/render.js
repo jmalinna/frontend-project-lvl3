@@ -5,7 +5,13 @@ import addPostsToState from './addPosts.js';
 export default (watchedState, input, schema, i18n) => {
   watchedState.form.disabledButton = true;
 
-  const addProxy = (URL) => `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(URL)}`;
+  const addProxy = (url) => {
+    const createdURL = new URL(url);
+    const proxyURL = 'https://hexlet-allorigins.herokuapp.com';
+    const pathURL = `get?disableCache=true&url=${encodeURIComponent(createdURL)}`;
+    return new URL(pathURL, proxyURL);
+  };
+
   const url = input.value.trim();
   const proxy = addProxy(url);
 

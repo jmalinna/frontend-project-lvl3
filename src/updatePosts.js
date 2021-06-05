@@ -4,7 +4,12 @@ import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 
 const addNewRssPosts = (watchedState) => {
-  const addProxy = (url) => `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(url)}`;
+  const addProxy = (url) => {
+    const createdURL = new URL(url);
+    const proxyURL = 'https://hexlet-allorigins.herokuapp.com';
+    const pathURL = `get?disableCache=true&url=${encodeURIComponent(createdURL)}`;
+    return new URL(pathURL, proxyURL);
+  };
 
   watchedState.feedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
