@@ -8,7 +8,7 @@ const addNewRssPosts = (watchedState) => {
     const createdURL = new URL(url);
     const proxyURL = 'https://hexlet-allorigins.herokuapp.com';
     const pathURL = `get?disableCache=true&url=${encodeURIComponent(createdURL)}`;
-    return new URL(pathURL, proxyURL);
+    return new URL(pathURL, proxyURL).href;
   };
 
   watchedState.feedsURLs.forEach((url) => {
