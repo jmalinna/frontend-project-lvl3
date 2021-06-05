@@ -4,13 +4,7 @@ import addPostsToState from './addPosts.js';
 
 export default (watchedState, input, schema, i18n) => {
   watchedState.form.disabledButton = true;
-
-  const addProxy = (url) => {
-    const createdURL = new URL(url);
-    const proxyURL = 'https://hexlet-allorigins.herokuapp.com';
-    const pathURL = `get?disableCache=true&url=${encodeURIComponent(createdURL)}`;
-    return new URL(pathURL, proxyURL).href;
-  };
+  const addProxy = (URL) => `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(URL)}`;
 
   const addFeedToState = (id, data, link) => {
     watchedState.feeds.push({
@@ -55,7 +49,6 @@ export default (watchedState, input, schema, i18n) => {
       watchedState.state = 'finished';
     })
     .catch((error) => {
-      // console.log(error);
       if (error.message === 'invalid rss') {
         watchedState.form.error = i18n.t('form.errors.invalidRSS');
       }
