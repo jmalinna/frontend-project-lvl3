@@ -9,17 +9,16 @@ export default (watchedState, input, schema, i18n) => {
     const createdURL = new URL(url);
     const proxyURL = 'https://hexlet-allorigins.herokuapp.com';
     const pathURL = `get?disableCache=true&url=${encodeURIComponent(createdURL)}`;
-    return new URL(pathURL, proxyURL).href;
+    return new URL(pathURL, proxyURL);
   };
-
-  const url = input.value.trim();
-  const proxy = addProxy(url);
 
   const addFeedToState = (id, data, link) => {
     watchedState.feeds.push({
       id, title: data.feed.title, description: data.feed.description, url: link,
     });
   };
+
+  const url = input.value.trim();
 
   schema.validate({ url })
     .catch((error) => {
@@ -35,7 +34,8 @@ export default (watchedState, input, schema, i18n) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => axios.get(proxy))
+    .then(() => addProxy(url))
+    .then((proxy) => axios.get(proxy))
     .then((response) => parseRSS(response.data.contents))
     .then((data) => {
       const id = watchedState.postsInfo.commonId;
