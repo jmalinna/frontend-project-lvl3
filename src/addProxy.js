@@ -1,11 +1,9 @@
 const addProxy = (url) => {
   const createdURL = new URL(url);
-  const proxyURL = 'https://hexlet-allorigins.herokuapp.com';
+  const proxyURL = new URL('https://hexlet-allorigins.herokuapp.com/get');
+  proxyURL.searchParams.set('disableCache', 'true');
+  proxyURL.searchParams.set('url', createdURL);
 
-  const pathname = '/get';
-  const search = `?disableCache=true&url=${encodeURIComponent(createdURL)}`;
-  const myURL = new URL(`${proxyURL}${pathname}${search}`);
-
-  return myURL;
+  return proxyURL;
 };
 export default addProxy;
