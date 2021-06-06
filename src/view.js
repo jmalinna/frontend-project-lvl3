@@ -1,6 +1,6 @@
 import onChange from 'on-change';
 
-export default (state, i18n, form, inputURL) => onChange(state, (path, value) => {
+export default (state, i18n, form, inputURL) => {
   const feedbackContainer = document.querySelector('.feedback');
   const buttonAdd = document.querySelector('button[aria-label="add"]');
 
@@ -77,7 +77,7 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     return type === 'button' ? showModalWindow(id) : markUrlAsViewed(link);
   };
 
-  const renderState = () => {
+  const renderState = (value) => {
     const feeds = document.querySelector('.feeds');
     const posts = document.querySelector('.posts');
     const ulElementPosts = posts.querySelector('ul');
@@ -132,7 +132,7 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     }
   };
 
-  const disableForm = () => {
+  const disableForm = (value) => {
     if (value) {
       buttonAdd.disabled = true;
       inputURL.setAttribute('readonly', true);
@@ -142,7 +142,7 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     }
   };
 
-  const renderError = () => {
+  const renderError = (value) => {
     if (!value) {
       inputURL.classList.remove('is-invalid');
       feedbackContainer.classList.remove('text-danger');
@@ -154,20 +154,21 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     inputURL.removeAttribute('readonly');
     feedbackContainer.textContent = value;
   };
-
-  switch (path) {
-    case 'form.disabledButton':
-      disableForm();
-      break;
-    case 'form.error':
-      renderError();
-      break;
-    case 'postsInfo.target.id':
-      renderModalWindow();
-      break;
-    case 'state':
-      renderState();
-      break;
-    default:
-  }
-});
+  return onChange(state, (path, value) => {
+    switch (path) {
+      case 'form.disabledButton':
+        disableForm(value);
+        break;
+      case 'form.error':
+        renderError(value);
+        break;
+      case 'postsInfo.target.id':
+        renderModalWindow();
+        break;
+      case 'state':
+        renderState(value);
+        break;
+      default:
+    }
+  });
+};

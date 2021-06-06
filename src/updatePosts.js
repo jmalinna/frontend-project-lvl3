@@ -5,11 +5,10 @@ import addPostsToState from './addPosts.js';
 import addProxy from './addProxy.js';
 
 const addNewRssPosts = (watchedState) => {
-  if (watchedState.feeds.length !== 0) {
+  const updatePosts = () => {
     watchedState.feeds.forEach((feed) => {
       watchedState.posts.newPostsId = feed.id;
       const proxy = addProxy(feed.url);
-
       axios.get(proxy)
         .then((response) => parseRSS(response.data.contents))
         .then((data) => differenceBy(data.items, watchedState.posts, 'url'))
@@ -20,11 +19,12 @@ const addNewRssPosts = (watchedState) => {
             watchedState.state = 'updating';
           }
         })
-        .catch(console.log)
-        .then(() => setTimeout(() => addNewRssPosts(watchedState), 5000));
+        .catch(() => setTimeout(() => addNewRssPosts(watchedState), 5000));
     });
-  } else {
-    setTimeout(() => addNewRssPosts(watchedState), 5000);
-  }
+    return Promise.resolve();
+  };
+
+  const promise = updatePosts();
+  promise.then(() => setTimeout(() => addNewRssPosts(watchedState), 5000));
 };
 export default addNewRssPosts;
