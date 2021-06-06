@@ -1,18 +1,17 @@
 import axios from 'axios';
 import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
+import addProxy from './addProxy.js';
 
 export default (watchedState, input, schema, i18n) => {
   watchedState.form.disabledButton = true;
-  const addProxy = (URL) => `https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(URL)}`;
+  const url = input.value.trim();
 
   const addFeedToState = (id, data, link) => {
     watchedState.feeds.push({
       id, title: data.feed.title, description: data.feed.description, url: link,
     });
   };
-
-  const url = input.value.trim();
 
   schema.validate({ url })
     .catch((error) => {
