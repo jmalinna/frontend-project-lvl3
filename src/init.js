@@ -24,7 +24,6 @@ export default () => {
     posts: [],
     updatedPosts: [],
     feeds: [],
-    feedsURLs: [],
     state: 'inactive',
   };
 

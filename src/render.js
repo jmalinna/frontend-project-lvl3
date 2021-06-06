@@ -18,7 +18,7 @@ export default (watchedState, input, schema, i18n) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
       throw new Error(i18n.t(error.errors.join('')));
     })
-    .then(() => watchedState.feedsURLs.filter((item) => item.url === url))
+    .then(() => watchedState.feeds.filter((feed) => feed.url === url))
     .then((existingURLs) => {
       if (existingURLs.length === 0) {
         watchedState.form.error = '';
@@ -33,14 +33,13 @@ export default (watchedState, input, schema, i18n) => {
     .then((data) => {
       const id = watchedState.postsInfo.commonId;
       watchedState.postsInfo.actualId = id;
-      watchedState.feedsURLs.push({ id, url });
 
       addFeedToState(id, data, url);
       addPostsToState(id, data, 'posts', watchedState);
 
       watchedState.postsInfo.commonId += 1;
 
-      if (watchedState.feedsURLs.length === 1) {
+      if (watchedState.feeds.length === 1) {
         watchedState.state = 'initialization';
       } else {
         watchedState.state = 'adding';
@@ -48,11 +47,14 @@ export default (watchedState, input, schema, i18n) => {
       watchedState.state = 'finished';
     })
     .catch((error) => {
-      if (error.message === 'invalid rss') {
-        watchedState.form.error = i18n.t('form.errors.invalidRSS');
-      }
-      if (error.message === 'Network Error') {
-        watchedState.form.error = i18n.t('form.errors.networkProblem');
+      switch (error.message) {
+        case 'invalid rss':
+          watchedState.form.error = i18n.t('form.errors.invalidRSS');
+          break;
+        case 'Network Error':
+          watchedState.form.error = i18n.t('form.errors.networkProblem');
+          break;
+        default:
       }
       watchedState.form.disabledButton = false;
     });

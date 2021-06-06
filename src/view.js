@@ -51,7 +51,9 @@ export default (state, i18n, form, inputURL) => onChange(state, (path, value) =>
     const link = document.querySelector(`a[data-id="${id}"]`);
 
     const markUrlAsViewed = (element) => {
-      element.classList.replace('fw-bold', 'fw-normal');
+      if (element) {
+        element.classList.replace('fw-bold', 'fw-normal');
+      }
     };
 
     const showModalWindow = (elementId) => {

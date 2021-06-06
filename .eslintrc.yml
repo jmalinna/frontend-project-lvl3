@@ -12,5 +12,6 @@ parserOptions:
 rules:
   import/extensions: off
   no-param-reassign: off
+  no-console: off
 
 overrides: [ { files: ["*.js"] } ]
