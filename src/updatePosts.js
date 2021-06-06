@@ -7,7 +7,7 @@ import addProxy from './addProxy.js';
 const addNewRssPosts = (watchedState) => {
   watchedState.feedsURLs.forEach((url) => {
     watchedState.posts.newPostsId = url.id;
-    const proxy = addProxy(url.url);
+    const proxy = addProxy(url.url).href;
     axios.get(proxy)
       .then((response) => parseRSS(response.data.contents))
       .then((data) => differenceBy(data.items, watchedState.posts, 'url'))

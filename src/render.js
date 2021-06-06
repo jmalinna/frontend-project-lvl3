@@ -27,7 +27,7 @@ export default (watchedState, input, schema, i18n) => {
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
-    .then(() => addProxy(url))
+    .then(() => addProxy(url).href)
     .then((proxy) => axios.get(proxy))
     .then((response) => parseRSS(response.data.contents))
     .then((data) => {
