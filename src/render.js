@@ -9,7 +9,7 @@ export default (watchedState, input, schema, i18n) => {
 
   const addFeedToState = (id, data, link) => {
     watchedState.feeds.push({
-      id, title: data.feed.title, description: data.feed.description, url: link,
+      id, title: data.feed.info.title, description: data.feed.info.description, link,
     });
   };
 
@@ -18,7 +18,7 @@ export default (watchedState, input, schema, i18n) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
       throw new Error(i18n.t(error.errors.join('')));
     })
-    .then(() => watchedState.feeds.filter((feed) => feed.url === url))
+    .then(() => watchedState.feeds.filter((feed) => feed.link === url))
     .then((existingURLs) => {
       if (existingURLs.length === 0) {
         watchedState.form.error = '';

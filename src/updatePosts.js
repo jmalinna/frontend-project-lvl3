@@ -8,14 +8,14 @@ const addNewRssPosts = (watchedState) => {
   const updatePosts = () => {
     watchedState.feeds.forEach((feed) => {
       watchedState.posts.newPostsId = feed.id;
-      const proxy = addProxy(feed.url);
+      const proxy = addProxy(feed.link);
       axios.get(proxy)
         .then((response) => parseRSS(response.data.contents))
-        .then((data) => differenceBy(data.items, watchedState.posts, 'url'))
+        .then((data) => differenceBy(data.feed.items, watchedState.posts, 'link'))
         .then((newPosts) => {
           if (newPosts) {
             const id = watchedState.postsInfo.newPostsId;
-            addPostsToState(id, { items: newPosts }, 'updatedPosts', watchedState);
+            addPostsToState(id, { feed: { items: newPosts } }, 'updatedPosts', watchedState);
             watchedState.state = 'updating';
           }
         })

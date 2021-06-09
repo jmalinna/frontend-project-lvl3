@@ -25,7 +25,7 @@ export default (state, i18n, form, inputURL) => {
       liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
 
       const link = document.createElement('a');
-      link.setAttribute('href', post.url);
+      link.setAttribute('href', post.link);
       link.setAttribute('data-id', post.postId);
       link.setAttribute('rel', 'noopener noreferrer');
       link.setAttribute('target', '_blank');
@@ -50,7 +50,7 @@ export default (state, i18n, form, inputURL) => {
     const { type, id } = state.postsInfo.target;
     const link = document.querySelector(`a[data-id="${id}"]`);
 
-    const markUrlAsViewed = (element) => {
+    const markLinkAsViewed = (element) => {
       if (element) {
         element.classList.replace('fw-bold', 'fw-normal');
       }
@@ -64,7 +64,7 @@ export default (state, i18n, form, inputURL) => {
       const modalBody = document.querySelector('.modal-body');
       modalBody.textContent = activePost.description;
       const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
-      aFooterElement.setAttribute('href', activePost.url);
+      aFooterElement.setAttribute('href', activePost.link);
 
       const container = document.querySelector('.modal');
       container.classList.add('show');
@@ -72,9 +72,9 @@ export default (state, i18n, form, inputURL) => {
       container.setAttribute('style', 'display: block');
       container.removeAttribute('aria-hidden');
 
-      markUrlAsViewed(link);
+      markLinkAsViewed(link);
     };
-    return type === 'button' ? showModalWindow(id) : markUrlAsViewed(link);
+    return type === 'button' ? showModalWindow(id) : markLinkAsViewed(link);
   };
 
   const renderState = (value) => {
