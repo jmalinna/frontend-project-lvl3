@@ -1,5 +1,5 @@
 const parseRSS = (xmlString) => {
-  const outputData = { feed: { info: {}, items: [] } }; // { feed: {}, items: [] }
+  const outputData = { feed: { info: {}, items: [] } };
   const parser = new DOMParser();
   const document = parser.parseFromString(xmlString, 'application/xml');
 

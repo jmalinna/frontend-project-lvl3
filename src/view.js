@@ -112,14 +112,8 @@ export default (state, i18n, form, inputURL) => {
         createLiPostElements(actualPosts2, ulElementPosts);
       }
         break;
-      case 'updating': {
+      case 'updating':
         createLiPostElements(state.updatedPosts, ulElementPosts);
-        state.updatedPosts.forEach((post) => {
-          state.posts.push(post);
-        });
-        const innerState = state;
-        innerState.updatedPosts = [];
-      }
         break;
       case 'finished':
         buttonAdd.disabled = false;
