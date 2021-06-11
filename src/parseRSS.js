@@ -1,10 +1,16 @@
-const parseRSS = (xmlString) => {
+const parseRSS = (xmlString, watchedState) => {
   const outputData = { feed: { info: {}, items: [] } };
   const parser = new DOMParser();
   const document = parser.parseFromString(xmlString, 'application/xml');
 
   const error = document.querySelector('parsererror');
-  if (error) throw new Error('invalid rss');
+
+  if (error && watchedState) {
+    watchedState.form.isParsingError = true;
+    throw new Error('invalid rss');
+  } else if (watchedState) {
+    watchedState.form.isParsingError = false;
+  }
 
   const feedDescription = document.querySelector('description').textContent;
   const feedTitle = document.querySelector('title').textContent;

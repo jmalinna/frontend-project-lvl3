@@ -11,6 +11,7 @@ export default () => {
   const state = {
     form: {
       error: '',
+      isParsingError: false,
       disabledButton: false,
     },
     postsInfo: {
