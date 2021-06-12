@@ -12,17 +12,25 @@ const parseRSS = (xmlString, watchedState) => {
     watchedState.form.isParsingError = false;
   }
 
-  const feedDescription = document.querySelector('description').textContent;
-  const feedTitle = document.querySelector('title').textContent;
-  outputData.feed.info = { title: feedTitle, description: feedDescription };
+  const feedDescription = document.querySelector('description');
+  const feedTitle = document.querySelector('title');
+
+  outputData.feed.info = {
+    title: feedTitle.textContent,
+    description: feedDescription.textContent,
+  };
 
   const items = document.querySelectorAll('item');
   items.forEach((item) => {
-    const title = item.querySelector('title').textContent;
-    const description = item.querySelector('description').textContent;
-    const link = item.querySelector('link').textContent;
+    const title = item.querySelector('title');
+    const description = item.querySelector('description');
+    const link = item.querySelector('link');
 
-    outputData.feed.items.push({ title, description, link });
+    outputData.feed.items.push({
+      title: title.textContent,
+      description: description.textContent,
+      link: link.textContent,
+    });
   });
 
   return outputData;
