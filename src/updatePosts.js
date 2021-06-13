@@ -16,10 +16,13 @@ const addNewRssPosts = (watchedState) => {
           if (newPosts) {
             const id = watchedState.postsInfo.newPostsId;
             watchedState.updatedPosts = [];
+
             addPostsToState(id, { feed: { items: newPosts } }, 'updatedPosts', watchedState);
+
             watchedState.updatedPosts.forEach((post) => {
               watchedState.posts.push(post);
             });
+
             watchedState.state = 'updating';
           }
         })

@@ -12,7 +12,7 @@ export default () => {
     form: {
       error: '',
       isParsingError: false,
-      disabledButton: false,
+      status: 'neutral',
     },
     postsInfo: {
       actualId: '',
@@ -23,8 +23,8 @@ export default () => {
       postId: 1,
     },
     posts: [],
-    updatedPosts: [],
     feeds: [],
+    updatedPosts: [],
     state: 'inactive',
   };
 

@@ -127,7 +127,7 @@ export default (state, i18n, form, inputURL) => {
   };
 
   const disableForm = (value) => {
-    if (value) {
+    if (value === 'sending') {
       buttonAdd.disabled = true;
       inputURL.setAttribute('readonly', true);
     } else {
@@ -150,7 +150,7 @@ export default (state, i18n, form, inputURL) => {
   };
   return onChange(state, (path, value) => {
     switch (path) {
-      case 'form.disabledButton':
+      case 'form.status':
         disableForm(value);
         break;
       case 'form.error':

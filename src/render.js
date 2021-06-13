@@ -4,7 +4,7 @@ import addPostsToState from './addPosts.js';
 import addProxy from './addProxy.js';
 
 export default (watchedState, input, schema, i18n) => {
-  watchedState.form.disabledButton = true;
+  watchedState.form.status = 'sending';
   const url = input.value.trim();
 
   const addFeedToState = (id, data, link) => {
@@ -51,6 +51,6 @@ export default (watchedState, input, schema, i18n) => {
     })
     .catch(() => {
       if (watchedState.form.isParsingError) watchedState.form.error = i18n.t('form.errors.invalidRSS');
-      watchedState.form.disabledButton = false;
+      watchedState.form.status = 'finished';
     });
 };
