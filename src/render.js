@@ -18,10 +18,10 @@ export default (watchedState, input, schema, i18n, commonId) => {
       watchedState.form.error = i18n.t(error.errors.join(''));
       throw new Error(i18n.t(error.errors.join('')));
     })
-    .then(() => watchedState.feeds.filter((feed) => feed.link === url))
+    .then(() => watchedState.feeds.find((feed) => feed.link === url))
     .then((existingURLs) => {
-      if (existingURLs.length === 0) {
-        watchedState.form.error = '';
+      if (!existingURLs) {
+        watchedState.form.error = null;
       } else {
         watchedState.form.error = i18n.t('form.errors.existingURL');
         throw new Error(i18n.t('form.errors.existingURL'));

@@ -11,9 +11,9 @@ import renderModalWindow from './renderModal.js';
 export default () => {
   const state = {
     form: {
-      error: '',
-      isParsingError: false,
+      error: null,
       status: 'neutral',
+      isParsingError: false,
     },
     posts: [],
     feeds: [],

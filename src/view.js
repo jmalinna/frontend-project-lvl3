@@ -116,6 +116,7 @@ export default (state, i18n, form, inputURL, commonId) => {
     inputURL.removeAttribute('readonly');
     feedbackContainer.textContent = value;
   };
+
   return onChange(state, (path, value) => {
     switch (path) {
       case 'form.status':
