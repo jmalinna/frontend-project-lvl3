@@ -1,17 +1,17 @@
 import onChange from 'on-change';
 
-export default (state, i18n, form, inputURL) => {
+export default (state, i18n, form, inputURL, commonId) => {
   const feedbackContainer = document.querySelector('.feedback');
   const buttonAdd = document.querySelector('button[aria-label="add"]');
 
-  const createLiFeedElement = (innerState) => {
+  const createLiFeedElement = (innerState, actualID) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
     const h3 = document.createElement('h3');
-    const actualFeed = innerState.feeds.find(
-      (feed) => feed.id === innerState.postsInfo.actualId,
-    );
-
+    console.log('actual id=', actualID);
+    console.log('inner state = ', innerState);
+    const actualFeed = innerState.feeds.find((feed) => feed.id === actualID);
+    console.log('actual feed=', actualFeed);
     h3.textContent = actualFeed.title;
     const p = document.createElement('p');
     p.textContent = actualFeed.description;
@@ -46,38 +46,7 @@ export default (state, i18n, form, inputURL) => {
     return ulElement;
   };
 
-  const renderModalWindow = () => {
-    const { type, id } = state.postsInfo.target;
-    const link = document.querySelector(`a[data-id="${id}"]`);
-
-    const markLinkAsViewed = (element) => {
-      if (element) {
-        element.classList.replace('fw-bold', 'fw-normal');
-      }
-    };
-
-    const showModalWindow = (elementId) => {
-      const activePost = state.posts.find((post) => post.postId === Number(elementId));
-
-      const h5 = document.querySelector('.modal-title');
-      h5.textContent = activePost.title;
-      const modalBody = document.querySelector('.modal-body');
-      modalBody.textContent = activePost.description;
-      const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
-      aFooterElement.setAttribute('href', activePost.link);
-
-      const container = document.querySelector('.modal');
-      container.classList.add('show');
-      container.setAttribute('aria-modal', 'true');
-      container.setAttribute('style', 'display: block');
-      container.removeAttribute('aria-hidden');
-
-      markLinkAsViewed(link);
-    };
-    return type === 'button' ? showModalWindow(id) : markLinkAsViewed(link);
-  };
-
-  const renderState = (value) => {
+  const renderState = (value, actualID) => {
     const feeds = document.querySelector('.feeds');
     const posts = document.querySelector('.posts');
     const ulElementPosts = posts.querySelector('ul');
@@ -90,7 +59,7 @@ export default (state, i18n, form, inputURL) => {
         const ul = document.createElement('ul');
         ul.classList.add('list-group', 'mb-5');
 
-        const li = createLiFeedElement(state);
+        const li = createLiFeedElement(state, commonId);
         ul.append(li);
         feeds.prepend(h2, ul);
 
@@ -98,17 +67,17 @@ export default (state, i18n, form, inputURL) => {
         h2Element.textContent = i18n.t('postsHeader');
         const ulElement = document.createElement('ul');
         ulElement.classList.add('list-group');
-        const actualPosts = state.posts.filter((post) => post.id === state.postsInfo.actualId);
+        const actualPosts = state.posts.filter((post) => post.id === actualID);
         createLiPostElements(actualPosts, ulElement);
         posts.prepend(h2Element, ulElement);
       }
         break;
       case 'adding': {
         const ulElementFeeds = feeds.querySelector('ul');
-        const liElementFeeds = createLiFeedElement(state);
+        const liElementFeeds = createLiFeedElement(state, commonId);
         ulElementFeeds.prepend(liElementFeeds);
 
-        const actualPosts2 = state.posts.filter((post) => post.id === state.postsInfo.actualId);
+        const actualPosts2 = state.posts.filter((post) => post.id === actualID);
         createLiPostElements(actualPosts2, ulElementPosts);
       }
         break;
@@ -149,6 +118,7 @@ export default (state, i18n, form, inputURL) => {
     feedbackContainer.textContent = value;
   };
   return onChange(state, (path, value) => {
+    console.log('common id in view.js =', commonId);
     switch (path) {
       case 'form.status':
         disableForm(value);
@@ -156,11 +126,11 @@ export default (state, i18n, form, inputURL) => {
       case 'form.error':
         renderError(value);
         break;
-      case 'postsInfo.target.id':
-        renderModalWindow();
-        break;
       case 'state':
-        renderState(value);
+        renderState(value, commonId);
+        if (value === 'finished') {
+          commonId += 1;
+        }
         break;
       default:
     }

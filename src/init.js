@@ -6,6 +6,7 @@ import view from './view.js';
 import ru from './locales/ru.js';
 import render from './render.js';
 import addNewRssPosts from './updatePosts.js';
+import renderModalWindow from './renderModal.js';
 
 export default () => {
   const state = {
@@ -14,18 +15,12 @@ export default () => {
       isParsingError: false,
       status: 'neutral',
     },
-    postsInfo: {
-      actualId: '',
-      newPostsId: '',
-      target: {},
-      viewedPostsIds: [],
-      commonId: 1,
-      postId: 1,
-    },
     posts: [],
     feeds: [],
     updatedPosts: [],
     state: 'inactive',
+    viewedPostsIds: [],
+    postId: 1,
   };
 
   yup.setLocale({
@@ -41,6 +36,7 @@ export default () => {
   const form = document.querySelector('.rss-form');
   const inputURL = document.querySelector('input[aria-label="url"]');
   const posts = document.querySelector('.posts');
+  let commonId = 1;
 
   const i18nInstance = i18n.createInstance();
   return i18nInstance.init({
@@ -51,17 +47,21 @@ export default () => {
     },
   })
     .then(() => {
-      const watchedState = view(state, i18nInstance, form, inputURL);
+      const watchedState = view(state, i18nInstance, form, inputURL, commonId);
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        render(watchedState, inputURL, schema, i18nInstance);
+        render(watchedState, inputURL, schema, i18nInstance, commonId);
+        commonId += 1;
       });
 
       posts.addEventListener('click', (event) => {
-        watchedState.postsInfo.target.type = event.target.getAttribute('type');
-        watchedState.postsInfo.target.id = event.target.dataset.id;
-        watchedState.postsInfo.viewedPostsIds.push(event.target.id);
+        const targetType = event.target.getAttribute('type');
+        const targetId = event.target.dataset.id;
+
+        renderModalWindow(targetType, targetId, state);
+
+        watchedState.viewedPostsIds.push(targetId);
       });
 
       setTimeout(() => addNewRssPosts(watchedState), 5000);

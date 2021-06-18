@@ -3,7 +3,8 @@ import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 import addProxy from './addProxy.js';
 
-export default (watchedState, input, schema, i18n) => {
+export default (watchedState, input, schema, i18n, commonId) => {
+  console.log('common id in render.js =', commonId);
   watchedState.form.status = 'sending';
   const url = input.value.trim();
 
@@ -11,6 +12,7 @@ export default (watchedState, input, schema, i18n) => {
     watchedState.feeds.push({
       id, title: data.feed.info.title, description: data.feed.info.description, link,
     });
+    console.log('watchedState.feeds=', watchedState.feeds);
   };
 
   schema.validate({ url })
@@ -34,13 +36,8 @@ export default (watchedState, input, schema, i18n) => {
       }))
     .then((response) => parseRSS(response.data.contents, watchedState))
     .then((data) => {
-      const id = watchedState.postsInfo.commonId;
-      watchedState.postsInfo.actualId = id;
-
-      addFeedToState(id, data, url);
-      addPostsToState(id, data, 'posts', watchedState);
-
-      watchedState.postsInfo.commonId += 1;
+      addFeedToState(commonId, data, url);
+      addPostsToState(commonId, data, 'posts', watchedState);
 
       if (watchedState.feeds.length === 1) {
         watchedState.state = 'initialization';
@@ -49,7 +46,8 @@ export default (watchedState, input, schema, i18n) => {
       }
       watchedState.state = 'finished';
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log(error);
       if (watchedState.form.isParsingError) watchedState.form.error = i18n.t('form.errors.invalidRSS');
       watchedState.form.status = 'finished';
     });
