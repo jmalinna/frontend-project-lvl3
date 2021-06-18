@@ -4,7 +4,6 @@ import addPostsToState from './addPosts.js';
 import addProxy from './addProxy.js';
 
 export default (watchedState, input, schema, i18n, commonId) => {
-  console.log('common id in render.js =', commonId);
   watchedState.form.status = 'sending';
   const url = input.value.trim();
 
@@ -12,7 +11,6 @@ export default (watchedState, input, schema, i18n, commonId) => {
     watchedState.feeds.push({
       id, title: data.feed.info.title, description: data.feed.info.description, link,
     });
-    console.log('watchedState.feeds=', watchedState.feeds);
   };
 
   schema.validate({ url })
@@ -46,8 +44,7 @@ export default (watchedState, input, schema, i18n, commonId) => {
       }
       watchedState.state = 'finished';
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       if (watchedState.form.isParsingError) watchedState.form.error = i18n.t('form.errors.invalidRSS');
       watchedState.form.status = 'finished';
     });

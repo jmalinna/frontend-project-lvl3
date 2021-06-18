@@ -7,12 +7,11 @@ export default (state, i18n, form, inputURL, commonId) => {
   const createLiFeedElement = (innerState, actualID) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
+
     const h3 = document.createElement('h3');
-    console.log('actual id=', actualID);
-    console.log('inner state = ', innerState);
     const actualFeed = innerState.feeds.find((feed) => feed.id === actualID);
-    console.log('actual feed=', actualFeed);
     h3.textContent = actualFeed.title;
+
     const p = document.createElement('p');
     p.textContent = actualFeed.description;
     li.prepend(h3, p);
@@ -118,7 +117,6 @@ export default (state, i18n, form, inputURL, commonId) => {
     feedbackContainer.textContent = value;
   };
   return onChange(state, (path, value) => {
-    console.log('common id in view.js =', commonId);
     switch (path) {
       case 'form.status':
         disableForm(value);
