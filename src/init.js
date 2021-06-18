@@ -36,7 +36,7 @@ export default () => {
   const form = document.querySelector('.rss-form');
   const inputURL = document.querySelector('input[aria-label="url"]');
   const posts = document.querySelector('.posts');
-  let commonId = 1;
+  const commonId = { id: 1 };
 
   const i18nInstance = i18n.createInstance();
   return i18nInstance.init({
@@ -52,7 +52,7 @@ export default () => {
       form.addEventListener('submit', (event) => {
         event.preventDefault();
         render(watchedState, inputURL, schema, i18nInstance, commonId);
-        commonId += 1;
+        commonId.id += 1;
       });
 
       posts.addEventListener('click', (event) => {
