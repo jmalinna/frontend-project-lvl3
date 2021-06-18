@@ -125,7 +125,7 @@ export default (state, i18n, form, inputURL, commonId) => {
       case 'form.error':
         renderError(value);
         break;
-      case 'state':
+      case 'loadingProcess.status':
         renderState(value, commonId);
         if (value === 'finished') {
           commonId += 1;

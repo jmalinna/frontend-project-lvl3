@@ -22,7 +22,7 @@ const addNewRssPosts = (watchedState) => {
               watchedState.posts.push(post);
             });
 
-            watchedState.state = 'updating';
+            watchedState.loadingProcess.status = 'updating';
           }
         })
         .catch(() => setTimeout(() => addNewRssPosts(watchedState), 5000));

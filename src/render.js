@@ -38,11 +38,11 @@ export default (watchedState, input, schema, i18n, commonId) => {
       addPostsToState(commonId, data, 'posts', watchedState);
 
       if (watchedState.feeds.length === 1) {
-        watchedState.state = 'initialization';
+        watchedState.loadingProcess.status = 'initialization';
       } else {
-        watchedState.state = 'adding';
+        watchedState.loadingProcess.status = 'adding';
       }
-      watchedState.state = 'finished';
+      watchedState.loadingProcess.status = 'finished';
     })
     .catch(() => {
       if (watchedState.form.isParsingError) watchedState.form.error = i18n.t('form.errors.invalidRSS');

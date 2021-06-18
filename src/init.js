@@ -15,10 +15,12 @@ export default () => {
       status: 'neutral',
       isParsingError: false,
     },
+    loadingProcess: {
+      status: 'inactive',
+    },
     posts: [],
     feeds: [],
     updatedPosts: [],
-    state: 'inactive',
     viewedPostsIds: [],
     postId: 1,
   };
@@ -47,11 +49,11 @@ export default () => {
     },
   })
     .then(() => {
-      const watchedState = view(state, i18nInstance, form, inputURL, commonId);
+      const watchedState = view(state, i18nInstance, form, inputURL, commonId.id);
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        render(watchedState, inputURL, schema, i18nInstance, commonId);
+        render(watchedState, inputURL, schema, i18nInstance, commonId.id);
         commonId.id += 1;
       });
 
