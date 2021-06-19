@@ -1,5 +1,4 @@
 import onChange from 'on-change';
-import renderModalWindow from './renderModal.js';
 
 export default (state, i18n, form, inputURL, commonId) => {
   const feedbackContainer = document.querySelector('.feedback');
@@ -122,6 +121,35 @@ export default (state, i18n, form, inputURL, commonId) => {
     }
   };
 
+  const renderViewedPosts = () => {
+    const targetId = state.viewedPostsIds[state.viewedPostsIds.length - 1];
+    const link = document.querySelector(`a[data-id="${targetId}"]`);
+
+    if (link) {
+      link.classList.replace('fw-bold', 'fw-normal');
+    }
+  };
+
+  const renderModal = (innerState) => {
+    const targetId = innerState.modalPostId;
+
+    const activePost = innerState.posts.find((post) => post.postId === Number(targetId));
+    const h5 = document.querySelector('.modal-title');
+    h5.textContent = activePost.title;
+
+    const modalBody = document.querySelector('.modal-body');
+    modalBody.textContent = activePost.description;
+
+    const aFooterElement = document.querySelector('.modal-footer').querySelector('a');
+    aFooterElement.setAttribute('href', activePost.link);
+
+    const container = document.querySelector('.modal');
+    container.classList.add('show');
+    container.setAttribute('aria-modal', 'true');
+    container.setAttribute('style', 'display: block');
+    container.removeAttribute('aria-hidden');
+  };
+
   return onChange(state, (path, value) => {
     switch (path) {
       case 'feeds':
@@ -134,7 +162,7 @@ export default (state, i18n, form, inputURL, commonId) => {
         renderPostsUpdating();
         break;
       case 'modalPostId':
-        renderModalWindow(state);
+        renderModal(state);
         break;
       case 'form.status':
         renderFormStatus(value);
@@ -147,6 +175,9 @@ export default (state, i18n, form, inputURL, commonId) => {
         if (value === 'finished') {
           commonId += 1;
         }
+        break;
+      case 'viewedPostsIds':
+        renderViewedPosts();
         break;
       default:
     }

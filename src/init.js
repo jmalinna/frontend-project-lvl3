@@ -4,8 +4,9 @@ import * as yup from 'yup';
 import i18n from 'i18next';
 import view from './view.js';
 import ru from './locales/ru.js';
-import render from './render.js';
+import renderForm from './renderForm.js';
 import addNewRssPosts from './updatePosts.js';
+import renderPosts from './renderPosts.js';
 
 export default () => {
   const state = {
@@ -53,16 +54,12 @@ export default () => {
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        render(watchedState, inputURL, schema, i18nInstance, commonId.id);
+        renderForm(watchedState, inputURL, schema, i18nInstance, commonId.id);
         commonId.id += 1;
       });
 
       posts.addEventListener('click', (event) => {
-        const targetType = event.target.getAttribute('type');
-        const targetId = event.target.dataset.id;
-        watchedState.modalPostId = { targetType, targetId };
-
-        watchedState.viewedPostsIds.push(targetId);
+        renderPosts(event.target, watchedState);
       });
 
       setTimeout(() => addNewRssPosts(watchedState), 5000);
