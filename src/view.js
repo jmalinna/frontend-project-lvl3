@@ -1,4 +1,5 @@
 import onChange from 'on-change';
+import renderModalWindow from './renderModal.js';
 
 export default (state, i18n, form, inputURL, commonId) => {
   const feedbackContainer = document.querySelector('.feedback');
@@ -18,83 +19,61 @@ export default (state, i18n, form, inputURL, commonId) => {
     return li;
   };
 
-  const createLiPostElements = (actualPosts, ulElement) => {
-    actualPosts.reverse().forEach((post) => {
-      const liElement = document.createElement('li');
-      liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+  const createLiPostElement = (post, ulElement) => {
+    const liElement = document.createElement('li');
+    liElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
 
-      const link = document.createElement('a');
-      link.setAttribute('href', post.link);
-      link.setAttribute('data-id', post.postId);
-      link.setAttribute('rel', 'noopener noreferrer');
-      link.setAttribute('target', '_blank');
-      link.classList.add('fw-bold', 'text-decoration-none', 'my-auto');
-      link.textContent = post.title;
+    const link = document.createElement('a');
+    link.setAttribute('href', post.link);
+    link.setAttribute('data-id', post.postId);
+    link.setAttribute('rel', 'noopener noreferrer');
+    link.setAttribute('target', '_blank');
+    link.classList.add('fw-bold', 'text-decoration-none', 'my-auto');
+    link.textContent = post.title;
 
-      const button = document.createElement('button');
-      button.setAttribute('type', 'button');
-      button.setAttribute('data-id', post.postId);
-      button.setAttribute('data-bs-toggle', 'modal');
-      button.setAttribute('data-bs-target', '#modal');
-      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-      button.textContent = i18n.t('postsButtonText');
+    const button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('data-id', post.postId);
+    button.setAttribute('data-bs-toggle', 'modal');
+    button.setAttribute('data-bs-target', '#modal');
+    button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+    button.textContent = i18n.t('postsButtonText');
 
-      liElement.append(link, button);
-      ulElement.prepend(liElement);
-    });
+    liElement.append(link, button);
+    ulElement.prepend(liElement);
+
     return ulElement;
   };
 
-  const renderState = (value, actualID) => {
-    const feeds = document.querySelector('.feeds');
-    const posts = document.querySelector('.posts');
-    const ulElementPosts = posts.querySelector('ul');
+  const renderLoadingStatus = (value) => {
+    if (value === 'initialization' && state.feeds.length === 0) {
+      const feeds = document.querySelector('.feeds');
+      const h2 = document.createElement('h2');
+      h2.textContent = i18n.t('feedsHeader');
+      const ul = document.createElement('ul');
+      ul.classList.add('list-group', 'mb-5');
 
-    switch (value) {
-      case 'initialization': {
-        const h2 = document.createElement('h2');
-        h2.textContent = i18n.t('feedsHeader');
+      feeds.prepend(h2, ul);
 
-        const ul = document.createElement('ul');
-        ul.classList.add('list-group', 'mb-5');
+      const posts = document.querySelector('.posts');
+      const h2Element = document.createElement('h2');
+      h2Element.textContent = i18n.t('postsHeader');
+      const ulElement = document.createElement('ul');
+      ulElement.classList.add('list-group');
 
-        const li = createLiFeedElement(state, commonId);
-        ul.append(li);
-        feeds.prepend(h2, ul);
+      posts.prepend(h2Element, ulElement);
+    }
 
-        const h2Element = document.createElement('h2');
-        h2Element.textContent = i18n.t('postsHeader');
-        const ulElement = document.createElement('ul');
-        ulElement.classList.add('list-group');
-        const actualPosts = state.posts.filter((post) => post.id === actualID);
-        createLiPostElements(actualPosts, ulElement);
-        posts.prepend(h2Element, ulElement);
-      }
-        break;
-      case 'adding': {
-        const ulElementFeeds = feeds.querySelector('ul');
-        const liElementFeeds = createLiFeedElement(state, commonId);
-        ulElementFeeds.prepend(liElementFeeds);
-
-        const actualPosts2 = state.posts.filter((post) => post.id === actualID);
-        createLiPostElements(actualPosts2, ulElementPosts);
-      }
-        break;
-      case 'updating':
-        createLiPostElements(state.updatedPosts, ulElementPosts);
-        break;
-      case 'finished':
-        buttonAdd.disabled = false;
-        inputURL.removeAttribute('readonly');
-        feedbackContainer.classList.add('text-success');
-        feedbackContainer.textContent = i18n.t('form.notifications.rssSuccess');
-        form.reset();
-        break;
-      default:
+    if (value === 'finished') {
+      buttonAdd.disabled = false;
+      inputURL.removeAttribute('readonly');
+      feedbackContainer.classList.add('text-success');
+      feedbackContainer.textContent = i18n.t('form.notifications.rssSuccess');
+      form.reset();
     }
   };
 
-  const disableForm = (value) => {
+  const renderFormStatus = (value) => {
     if (value === 'sending') {
       buttonAdd.disabled = true;
       inputURL.setAttribute('readonly', true);
@@ -117,16 +96,54 @@ export default (state, i18n, form, inputURL, commonId) => {
     feedbackContainer.textContent = value;
   };
 
+  const renderFeeds = () => {
+    const feeds = document.querySelector('.feeds');
+    const ulElementFeeds = feeds.querySelector('ul');
+
+    const liElementFeeds = createLiFeedElement(state, commonId);
+    ulElementFeeds.prepend(liElementFeeds);
+  };
+
+  const renderPosts = () => {
+    const posts = document.querySelector('.posts');
+    const ulElementPosts = posts.querySelector('ul');
+    const post = state.posts[state.posts.length - 1];
+
+    createLiPostElement(post, ulElementPosts);
+  };
+
+  const renderPostsUpdating = () => {
+    const posts = document.querySelector('.posts');
+    const ulElementPosts = posts.querySelector('ul');
+    const newPost = state.updatedPosts[state.updatedPosts.length - 1];
+
+    if (newPost) {
+      createLiPostElement(newPost, ulElementPosts);
+    }
+  };
+
   return onChange(state, (path, value) => {
     switch (path) {
+      case 'feeds':
+        renderFeeds();
+        break;
+      case 'posts':
+        renderPosts();
+        break;
+      case 'updatedPosts':
+        renderPostsUpdating();
+        break;
+      case 'modalPostId':
+        renderModalWindow(state);
+        break;
       case 'form.status':
-        disableForm(value);
+        renderFormStatus(value);
         break;
       case 'form.error':
         renderError(value);
         break;
       case 'loadingProcess.status':
-        renderState(value, commonId);
+        renderLoadingStatus(value, commonId);
         if (value === 'finished') {
           commonId += 1;
         }

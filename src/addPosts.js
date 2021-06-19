@@ -1,5 +1,5 @@
 const addPostsToState = (id, data, postsName, watchedState) => {
-  data.feed.items.forEach((item) => {
+  data.feed.items.reverse().forEach((item) => {
     watchedState[postsName].push({
       id,
       postId: watchedState.postId,

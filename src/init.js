@@ -6,7 +6,6 @@ import view from './view.js';
 import ru from './locales/ru.js';
 import render from './render.js';
 import addNewRssPosts from './updatePosts.js';
-import renderModalWindow from './renderModal.js';
 
 export default () => {
   const state = {
@@ -23,6 +22,7 @@ export default () => {
     updatedPosts: [],
     viewedPostsIds: [],
     postId: 1,
+    modalPostId: null,
   };
 
   yup.setLocale({
@@ -60,8 +60,7 @@ export default () => {
       posts.addEventListener('click', (event) => {
         const targetType = event.target.getAttribute('type');
         const targetId = event.target.dataset.id;
-
-        renderModalWindow(targetType, targetId, state);
+        watchedState.modalPostId = { targetType, targetId };
 
         watchedState.viewedPostsIds.push(targetId);
       });

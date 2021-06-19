@@ -5,6 +5,7 @@ import addProxy from './addProxy.js';
 
 export default (watchedState, input, schema, i18n, commonId) => {
   watchedState.form.status = 'sending';
+  watchedState.form.isParsingError = false;
   const url = input.value.trim();
 
   const addFeedToState = (id, data, link) => {
@@ -34,14 +35,11 @@ export default (watchedState, input, schema, i18n, commonId) => {
       }))
     .then((response) => parseRSS(response.data.contents, watchedState))
     .then((data) => {
+      watchedState.loadingProcess.status = 'initialization';
+
       addFeedToState(commonId, data, url);
       addPostsToState(commonId, data, 'posts', watchedState);
 
-      if (watchedState.feeds.length === 1) {
-        watchedState.loadingProcess.status = 'initialization';
-      } else {
-        watchedState.loadingProcess.status = 'adding';
-      }
       watchedState.loadingProcess.status = 'finished';
     })
     .catch(() => {

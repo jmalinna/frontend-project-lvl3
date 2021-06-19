@@ -1,11 +1,14 @@
-const renderModalWindow = (targetType, targetId, state) => {
-//   const { type, id } = state.postsInfo.target;
+const renderModalWindow = (state) => {
+  const { targetId } = state.modalPostId;
+  const { targetType } = state.modalPostId;
   const link = document.querySelector(`a[data-id="${targetId}"]`);
+
   const markLinkAsViewed = (element) => {
     if (element) {
       element.classList.replace('fw-bold', 'fw-normal');
     }
   };
+
   const showModalWindow = (elementId) => {
     const activePost = state.posts.find((post) => post.postId === Number(elementId));
     const h5 = document.querySelector('.modal-title');

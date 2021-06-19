@@ -21,8 +21,6 @@ const addNewRssPosts = (watchedState) => {
             watchedState.updatedPosts.forEach((post) => {
               watchedState.posts.push(post);
             });
-
-            watchedState.loadingProcess.status = 'updating';
           }
         })
         .catch(() => setTimeout(() => addNewRssPosts(watchedState), 5000));
