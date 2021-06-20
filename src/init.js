@@ -13,7 +13,6 @@ export default () => {
     form: {
       error: null,
       status: 'neutral',
-      isParsingError: false,
     },
     loadingProcess: {
       status: 'inactive',

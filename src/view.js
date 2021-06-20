@@ -4,12 +4,12 @@ export default (state, i18n, form, inputURL, commonId) => {
   const feedbackContainer = document.querySelector('.feedback');
   const buttonAdd = document.querySelector('button[aria-label="add"]');
 
-  const createLiFeedElement = (innerState, actualID) => {
+  const createLiFeedElement = (innerState) => {
     const li = document.createElement('li');
     li.classList.add('list-group-item');
 
     const h3 = document.createElement('h3');
-    const actualFeed = innerState.feeds.find((feed) => feed.id === actualID);
+    const actualFeed = innerState.feeds[innerState.feeds.length - 1];
     h3.textContent = actualFeed.title;
 
     const p = document.createElement('p');
@@ -99,7 +99,7 @@ export default (state, i18n, form, inputURL, commonId) => {
     const feeds = document.querySelector('.feeds');
     const ulElementFeeds = feeds.querySelector('ul');
 
-    const liElementFeeds = createLiFeedElement(state, commonId);
+    const liElementFeeds = createLiFeedElement(state);
     ulElementFeeds.prepend(liElementFeeds);
   };
 

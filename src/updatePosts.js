@@ -11,12 +11,12 @@ const addNewRssPosts = (watchedState) => {
       const { id } = feed;
       axios.get(proxy)
         .then((response) => parseRSS(response.data.contents))
-        .then((data) => differenceBy(data.feed.items, watchedState.posts, 'link'))
+        .then((data) => differenceBy(data.items, watchedState.posts, 'link'))
         .then((newPosts) => {
           if (newPosts) {
             watchedState.updatedPosts = [];
 
-            addPostsToState(id, { feed: { items: newPosts } }, 'updatedPosts', watchedState);
+            addPostsToState(id, { items: newPosts }, 'updatedPosts', watchedState);
 
             watchedState.updatedPosts.forEach((post) => {
               watchedState.posts.push(post);
