@@ -8,7 +8,6 @@ export default (watchedState, input, schema, i18n, commonId) => {
   const url = input.value.trim();
 
   const addFeedToState = (id, data, link) => {
-    console.log('data=', data);
     watchedState.feeds.push({
       id, title: data.title, description: data.description, link,
     });

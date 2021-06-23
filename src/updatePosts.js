@@ -28,6 +28,6 @@ const addNewRssPosts = (watchedState) => {
   const promises = watchedState.feeds.map((feed) => updatePosts(feed));
 
   const promise = Promise.all(promises);
-  promise.finally(() => setTimeout(() => addNewRssPosts(watchedState), 5000));
+  return promise.finally(() => setTimeout(() => addNewRssPosts(watchedState), 5000));
 };
 export default addNewRssPosts;
