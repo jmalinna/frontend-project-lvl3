@@ -92,7 +92,7 @@ export default (state, i18n, form, inputURL, commonId) => {
     }
     buttonAdd.disabled = false;
     inputURL.removeAttribute('readonly');
-    feedbackContainer.textContent = value;
+    feedbackContainer.textContent = i18n.t(value);
   };
 
   const renderFeeds = () => {

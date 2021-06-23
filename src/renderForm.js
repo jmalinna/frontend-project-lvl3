@@ -15,7 +15,7 @@ export default (watchedState, input, schema, i18n, commonId) => {
 
   schema.validate({ url })
     .catch((error) => {
-      watchedState.form.error = i18n.t(error.errors.join(''));
+      watchedState.form.error = error.errors.join('');
       throw new Error(i18n.t(error.errors.join('')));
     })
     .then(() => watchedState.feeds.find((feed) => feed.link === url))
@@ -23,16 +23,12 @@ export default (watchedState, input, schema, i18n, commonId) => {
       if (!existingURLs) {
         watchedState.form.error = null;
       } else {
-        watchedState.form.error = i18n.t('form.errors.existingURL');
+        watchedState.form.error = 'form.errors.existingURL';
         throw new Error(i18n.t('form.errors.existingURL'));
       }
     })
     .then(() => addProxy(url))
-    .then((proxy) => axios.get(proxy)
-      .catch((error) => {
-        error.isAxiosError = true;
-        throw error;
-      }))
+    .then((proxy) => axios.get(proxy))
     .then((response) => parseRSS(response.data.contents))
     .then((data) => {
       watchedState.loadingProcess.status = 'initialization';
@@ -46,9 +42,9 @@ export default (watchedState, input, schema, i18n, commonId) => {
       watchedState.form.status = 'finished';
 
       if (error.isAxiosError) {
-        watchedState.form.error = i18n.t('form.errors.networkProblem');
+        watchedState.form.error = 'form.errors.networkProblem';
       } else if (error.isRssParsingError) {
-        watchedState.form.error = i18n.t('form.errors.invalidRSS');
+        watchedState.form.error = 'form.errors.invalidRSS';
       }
     });
 };
