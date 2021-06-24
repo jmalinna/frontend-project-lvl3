@@ -3,9 +3,10 @@ import parseRSS from './parseRSS.js';
 import addPostsToState from './addPosts.js';
 import addProxy from './addProxy.js';
 
-export default (watchedState, input, schema, i18n, commonId) => {
+export default (watchedState, input, schema, i18n) => {
   watchedState.form.status = 'sending';
   const url = input.value.trim();
+  const commonId = watchedState.feeds.length;
 
   const addFeedToState = (id, data, link) => {
     watchedState.feeds.push({

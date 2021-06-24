@@ -1,6 +1,6 @@
 import onChange from 'on-change';
 
-export default (state, i18n, form, inputURL, commonId) => {
+export default (state, i18n, form, inputURL) => {
   const feedbackContainer = document.querySelector('.feedback');
   const buttonAdd = document.querySelector('button[aria-label="add"]');
 
@@ -171,10 +171,7 @@ export default (state, i18n, form, inputURL, commonId) => {
         renderError(value);
         break;
       case 'loadingProcess.status':
-        renderLoadingStatus(value, commonId);
-        if (value === 'finished') {
-          commonId += 1;
-        }
+        renderLoadingStatus(value);
         break;
       case 'viewedPostsIds':
         renderViewedPosts();

@@ -21,7 +21,6 @@ export default () => {
     feeds: [],
     updatedPosts: [],
     viewedPostsIds: [],
-    postId: 1,
     modalPostId: null,
   };
 
@@ -38,7 +37,6 @@ export default () => {
   const form = document.querySelector('.rss-form');
   const inputURL = document.querySelector('input[aria-label="url"]');
   const posts = document.querySelector('.posts');
-  const commonId = { id: 1 };
 
   const i18nInstance = i18n.createInstance();
   return i18nInstance.init({
@@ -49,12 +47,11 @@ export default () => {
     },
   })
     .then(() => {
-      const watchedState = view(state, i18nInstance, form, inputURL, commonId.id);
+      const watchedState = view(state, i18nInstance, form, inputURL);
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        renderForm(watchedState, inputURL, schema, i18nInstance, commonId.id);
-        commonId.id += 1;
+        renderForm(watchedState, inputURL, schema, i18nInstance);
       });
 
       posts.addEventListener('click', (event) => {
