@@ -9,7 +9,7 @@ const addNewRssPosts = (watchedState) => {
     const proxy = addProxy(feed.link);
     const { id } = feed;
 
-    axios.get(proxy)
+    return axios.get(proxy)
       .then((response) => parseRSS(response.data.contents))
       .then((data) => differenceBy(data.items, watchedState.posts, 'link'))
       .then((newPosts) => {
